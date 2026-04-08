@@ -33,6 +33,10 @@ body {
   gap: 16px;
 }
 
+.selected-row {
+  background-color: #d0ebff;
+}
+
 .menu-left span {
   cursor: pointer;
   font-size: 13px;
@@ -47,7 +51,6 @@ body {
   position: relative;
 }
 
-/* dropdown box */
 .dropdown {
   position: absolute;
   top: 25px;
@@ -59,7 +62,6 @@ body {
   z-index: 100;
 }
 
-/* từng item */
 .dropdown .item {
   padding: 8px 12px;
   cursor: pointer;
