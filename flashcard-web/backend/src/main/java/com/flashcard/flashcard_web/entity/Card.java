@@ -1,6 +1,7 @@
 package com.flashcard.flashcard_web.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,6 +21,6 @@ public class Card {
 
     @ManyToOne
     @JoinColumn(name = "deck_id")
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Deck deck;
 }

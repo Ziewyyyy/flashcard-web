@@ -24,4 +24,9 @@ public class Deck {
     @OneToMany(mappedBy = "deck", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Card> cards;
+
+    @Transient
+    public int getCardCount() {
+        return cards != null ? cards.size() : 0;
+    }
 }
