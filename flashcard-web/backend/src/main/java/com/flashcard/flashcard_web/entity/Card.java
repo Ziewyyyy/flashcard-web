@@ -1,25 +1,25 @@
 package com.flashcard.flashcard_web.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "card")
 @Data
-
-public class User {
+public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String username;
+    private String front;
 
     @Column(nullable = false)
-    private String password;
+    private String back;
 
-    // 1 user có nhiều deck
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Deck> decks;
+    @ManyToOne
+    @JoinColumn(name = "deck_id")
+    @JsonIgnore
+    private Deck deck;
 }
