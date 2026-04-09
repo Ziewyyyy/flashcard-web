@@ -1,8 +1,6 @@
   import React, { useState, useRef, useEffect } from "react";
-  import { useParams } from "react-router-dom";
-  import "../css/Home.css";
-  import "../css/CreateDeck.css";
-  import "../css/Card.css";
+  import { useParams, useNavigate } from "react-router-dom";
+  import "../css/StudyScreen.css";
   import { getCards } from "../api/cardApi";
 
   function StudyScreen() {
@@ -10,6 +8,9 @@
     const [cards, setCards] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showBack, setShowBack] = useState(false);
+    const [isFinished, setIsFinished] = useState(false);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         loadCards();
@@ -29,12 +30,28 @@
     }
 
     const handleNext = () => {
+        if(currentIndex + 1 >= cards.length){
+            setIsFinished(true); 
+            return;
+        }
         setShowBack(false);
         setCurrentIndex((prev) => (prev + 1) % cards.length);
+        
+    }
+
+     
+    if(isFinished){
+        return (
+            <div className="study-container">
+                <h2>🎉 Finish!</h2>
+                <button className="btn1" onClick={() => navigate("/")}>
+                    Return
+                </button>
+            </div>
+        )
     }
     const currentCard = cards[currentIndex];
     if (!currentCard) return <div>Loading...</div>;
-     
 
     return (
         <div className="study-container">
