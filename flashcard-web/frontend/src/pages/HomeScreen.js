@@ -99,7 +99,12 @@
             >
               Add
             </button>
-            <button className="btn">Browse</button>
+            <button className="btn"
+                    disabled={!selectedDeckId}
+                    onClick={() => navigate(`/cards/${selectedDeckId}`)}
+            >
+              Browse
+            </button>
             <button className="btn">Stats</button>
             <button className="btn">Sync</button>
           </div>

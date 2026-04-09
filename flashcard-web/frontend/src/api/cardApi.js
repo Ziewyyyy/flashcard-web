@@ -2,7 +2,8 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8080/api/cards";
 
-export const getCards = () => axios.get(API_URL);
+export const getCards = (deckId) =>
+  axios.get(`${API_URL}/deck/${deckId}`);
 
 export const createCard = (card) => axios.post(API_URL, card);
 
