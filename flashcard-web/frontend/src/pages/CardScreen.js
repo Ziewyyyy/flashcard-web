@@ -20,7 +20,7 @@
           } catch (err) {
             console.error("Failed to load cards", err);
           }
-        };
+    };
     return (
     <div className="app">
         <div className="card-screen">

@@ -171,3 +171,35 @@ td:nth-child(3) {
 .bottom-buttons .btn:active {
   transform: scale(0.98);
 }
+
+.study-modal {
+  display: flex;
+  width: 500px;
+  padding: 0;
+}
+
+.study-left {
+  flex: 1;
+  padding: 20px;
+  background: #f5f5f5;
+  border-right: 1px solid #ddd;
+}
+
+.study-right {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.study-btn {
+  padding: 10px 20px;
+  background: #4cafef;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}

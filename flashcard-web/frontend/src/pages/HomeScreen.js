@@ -9,6 +9,7 @@
     const [showMenu, setShowMenu] = useState(false);
     const [showModalDeck, setShowModalDeck] = useState(false);
     const [showModalCard, setShowModalCard] = useState(false);
+    const [showModalStudy, setShowModalStudy] = useState(false);
     const [decks, setDecks] = useState([]);
     const [deckName, setDeckName] = useState(""); 
     const menuRef = useRef();
@@ -67,7 +68,7 @@
         console.error("Failed to create card", err);
       }
     }
-
+    const selectedDeck = decks.find(d => d.id === selectedDeckId);
     return (
       <>
         <div className="app">
@@ -124,7 +125,10 @@
                 {decks.map((deck) => (
                 <tr
                   key={deck.id}
-                  onClick={() => setSelectedDeckId(deck.id)}
+                  onClick={() => {
+                    setSelectedDeckId(deck.id);
+                    setShowModalStudy(true);
+                  }}
                   className={selectedDeckId === deck.id ? "selected-row" : ""}
                 >
                 <td>{deck.name}</td>
@@ -152,6 +156,33 @@
         </div>
 
         {/* Modal */}
+        {showModalStudy && selectedDeck &&(
+          <div className="modal-overlay">
+            <div className="modal study-modal">
+              <div className="study-left">
+                <h2>{selectedDeck.name}
+                  <p>Cards: {selectedDeck.cardCount}</p>
+                </h2>
+              </div>
+
+              <div className="study-right">
+                <button
+                  className="study-btn"
+                  onClick={() => {
+                  setShowModalStudy(false);
+                  navigate(`/study/${selectedDeck.id}`);
+                  }}
+                >
+                 Study
+                </button>
+                <button onClick={() => setShowModalStudy(false)}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {showModalDeck && (
           <div className="modal-overlay">
             <div className="modal">
@@ -211,6 +242,8 @@
             </div>
           )}
       </>
+
+      
     );
   }
 
