@@ -46,4 +46,13 @@ public class DeckController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteDeck(@PathVariable Long id) {
+        if(!deckRepository.existsById(id)){
+            return ResponseEntity.notFound().build();
+        }
+        deckRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
 }

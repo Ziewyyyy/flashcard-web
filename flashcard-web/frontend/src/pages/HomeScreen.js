@@ -2,7 +2,7 @@
   import "../css/Home.css";
   import "../css/CreateDeck.css";
   import { useNavigate } from "react-router-dom";
-  import { getDecks, createDeck } from "../api/deckApi";
+  import { getDecks, createDeck, deleteDeck } from "../api/deckApi";
   import { createCard } from "../api/cardApi";
 
   function Home() {
@@ -52,6 +52,16 @@
         await loadDeck();
       } catch (err) {
         console.error("Failed to create deck", err);
+      }
+    }
+
+    const deleteDeckById = async (id) => {
+      if (!id) return;
+      try {
+        await deleteDeck(id);
+        await loadDeck();
+      } catch (err) {
+        console.error("Failed to delete deck", err);
       }
     }
 
@@ -172,7 +182,11 @@
             >
               Create Deck
             </button>
-            <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-full shadow">Delete Deck</button>
+            <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-full shadow"
+              onClick={() => deleteDeckById(selectedDeckId)}
+            >
+              Delete Deck
+            </button>
           </div>
         </div>
 
