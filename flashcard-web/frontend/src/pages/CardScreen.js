@@ -1,16 +1,33 @@
   import React, { useState, useRef, useEffect } from "react";
-  import { useParams } from "react-router-dom";
+  import { useParams, useLocation } from "react-router-dom";
   import "../css/Home.css";
   import "../css/CreateDeck.css";
   import "../css/Card.css";
   import { getCards } from "../api/cardApi";
+  import { getDeckById } from "../api/deckApi";
 
   function CardScreen() {
     const { deckId } = useParams();
     const [cards, setCards] = useState([]);
+    const [deckName, setDeckName] = useState("");
+
     useEffect(() => {
-          if(deckId)loadCards();
+          if(deckId)
+          {
+            loadCards();
+            loadDeckName();
+          }
         }, [deckId]);
+    
+    const loadDeckName = async () => {
+        try {
+            const res = await getDeckById(deckId);
+            console.log("GET deck:", res.data);
+            setDeckName(res.data.name);
+        }catch (err) {
+            console.error("Failed to load deck name", err);
+        }
+    };
 
     const loadCards = async () => {
           try {
@@ -24,7 +41,7 @@
     return (
     <div className="app">
         <div className="card-screen">
-            <h1>Card Screen</h1>
+            <h1>{deckName}</h1>
         </div>
 
         <div className="table-container">

@@ -91,67 +91,88 @@
           </div>
 
           {/* Navigation */}
-          <div className="top-buttons">
-            <button className="btn">Decks</button>
+          <div className="inline-flex mt-4 justify-center">
+            <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-l-full">Decks</button>
             <button
-              className="btn"
+              className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
               disabled={!selectedDeckId}
               onClick={() => setShowModalCard(true)}
             >
               Add
             </button>
-            <button className="btn"
+            <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
                     disabled={!selectedDeckId}
                     onClick={() => navigate(`/cards/${selectedDeckId}`)}
             >
               Browse
             </button>
-            <button className="btn">Stats</button>
-            <button className="btn">Sync</button>
+            <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">Stats</button>
+            <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-r-full">Sync</button>
           </div>
 
           {/* Table */}
-          <div className="table-container">
-            <table>
+        <div className="flex justify-center mt-6">
+          <div className="w-[800px] bg-white rounded-xl shadow p-4">
+            <table className="w-full">
               <thead>
                 <tr>
-                  <th>Deck</th>
-                  <th>Amount</th>
-                  <th>Learn</th>
-                  <th></th>
+                  <th className="px-4 py-2">Deck</th>
+                  <th className="px-4 py-2">Amount</th>
+                  <th className="px-4 py-2">Learn</th>
+                  <th className="px-4 py-2"></th>
                 </tr>
               </thead>
               <tbody>
                 {decks.map((deck) => (
                 <tr
                   key={deck.id}
-                  onClick={() => {
-                    setSelectedDeckId(deck.id);
-                    setShowModalStudy(true);
-                  }}
-                  className={selectedDeckId === deck.id ? "selected-row" : ""}
+                  className={`cursor-pointer ${
+                    selectedDeckId === deck.id ? "selected-row" : ""
+                  }`}
                 >
-                <td>{deck.name}</td>
-                <td>{deck.cardCount}</td>
-                <td>0</td>
-                <td>
-                  <button>Study</button>
-                </td>
-              </tr>
+                  <td
+                    className="border px-4 py-2 text-blue-600 hover:underline"
+                    onClick={() => {
+                      setSelectedDeckId(deck.id);
+                      setShowModalStudy(true);
+                    }}
+                  >
+                    {deck.name}
+                  </td>
+
+                  <td
+                    className="border px-4 py-2"
+                    onClick={() => setSelectedDeckId(deck.id)}
+                  >
+                    {deck.cardCount}
+                  </td>
+
+                  <td
+                    className="border px-4 py-2"
+                    onClick={() => setSelectedDeckId(deck.id)}
+                  >
+                    0
+                  </td>
+
+                  <td className="border px-4 py-2">
+                    <button>Study</button>
+                  </td>
+                </tr>
               ))}
               </tbody>
             </table>
           </div>
+        </div>
 
           {/* Bottom buttons */}
           <div className="flex gap-4 justify-center mt-6">
             <button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-lg shadow transition duration-200"
+              className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-full shadow"
               onClick={() => setShowModalDeck(true)}
             >
               Create Deck
             </button>
-            <button className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg shadow transition duration-200">Delete Deck</button>
+            <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-full shadow">Delete Deck</button>
           </div>
         </div>
 

@@ -8,3 +8,7 @@ export const createDeck = (deck) => axios.post(API_URL, deck);
 
 export const deleteDeck = (id) => axios.delete(`${API_URL}/${id}`);
 
+export const getDeckById = (id) => {
+    return axios.get(`${API_URL}/${id}`);
+}
+

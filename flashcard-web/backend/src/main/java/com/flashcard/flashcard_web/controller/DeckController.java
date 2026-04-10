@@ -4,6 +4,7 @@ import com.flashcard.flashcard_web.entity.Deck;
 import com.flashcard.flashcard_web.repository.DeckRepository;
 import com.flashcard.flashcard_web.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -37,5 +38,12 @@ public class DeckController {
 
             return map;
         }).toList();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Deck> getDeckById(@PathVariable Long id) {
+        return deckRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
