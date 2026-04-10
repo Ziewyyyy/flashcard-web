@@ -144,14 +144,14 @@
           </div>
 
           {/* Bottom buttons */}
-          <div className="bottom-buttons">
+          <div className="flex gap-4 justify-center mt-6">
             <button
-              className="btn"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-lg shadow transition duration-200"
               onClick={() => setShowModalDeck(true)}
             >
               Create Deck
             </button>
-            <button className="btn">Delete Deck</button>
+            <button className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg shadow transition duration-200">Delete Deck</button>
           </div>
         </div>
 
