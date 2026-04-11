@@ -2,8 +2,11 @@ package com.flashcard.flashcard_web.controller;
 
 import com.flashcard.flashcard_web.entity.Card;
 import com.flashcard.flashcard_web.entity.Deck;
+import com.flashcard.flashcard_web.repository.CardRepository;
+import com.flashcard.flashcard_web.repository.DeckRepository;
 import com.flashcard.flashcard_web.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -18,6 +21,9 @@ public class CardController {
     @Autowired
     private CardService service;
 
+    @Autowired
+    private CardRepository cardRepository;
+
 
     @GetMapping("/deck/{deckId}")
     public List<Card> getByDeck(@PathVariable Long deckId){
@@ -29,6 +35,28 @@ public class CardController {
         return service.create(c);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateCard(@PathVariable Long id, @RequestBody Card card)
+    {
+        Card existing = cardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Card not found"));
 
+        existing.setFront(card.getFront());
+        existing.setBack(card.getBack());
+
+        cardRepository.save(existing);
+
+        return ResponseEntity.ok(existing);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCard(@PathVariable Long id) {
+        if(!cardRepository.existsById(id))
+        {
+            return ResponseEntity.notFound().build();
+        }
+        cardRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
 
 }
