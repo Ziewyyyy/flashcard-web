@@ -78,6 +78,12 @@
         console.error("Failed to create card", err);
       }
     }
+
+    const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
     const selectedDeck = decks.find(d => d.id === selectedDeckId);
     return (
       <>
@@ -97,6 +103,12 @@
               </div>
 
               <span>Settings</span>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+              >
+                Logout
+              </button>
             </div>
           </div>
 
