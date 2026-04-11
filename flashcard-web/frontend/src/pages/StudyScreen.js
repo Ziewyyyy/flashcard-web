@@ -1,7 +1,7 @@
   import React, { useState, useRef, useEffect } from "react";
   import { useParams, useNavigate } from "react-router-dom";
   import "../css/StudyScreen.css";
-  import { getCards } from "../api/cardApi";
+  import { getCards, getStudyCards } from "../api/cardApi";
 
   function StudyScreen() {
     const { deckId } = useParams();
@@ -9,6 +9,7 @@
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showBack, setShowBack] = useState(false);
     const [isFinished, setIsFinished] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const navigate = useNavigate();
 
@@ -18,10 +19,16 @@
 
     const loadCards = async () => {
         try{
-            const res = await getCards(deckId);
+            setIsLoading(true);
+            const res = await getStudyCards(deckId);
             setCards(res.data);
+            if(res.data.length === 0){
+                setIsFinished(true);
+            }
         }catch(err){
             console.error("Failed to load cards", err);
+        }finally {
+            setIsLoading(false); 
         }
     };
 
@@ -37,6 +44,14 @@
         setShowBack(false);
         setCurrentIndex((prev) => (prev + 1) % cards.length);
         
+    }
+
+    if(isLoading){
+        return (
+            <div className="study-container">
+                <h2>Loading...</h2>
+            </div>
+        )
     }
 
      

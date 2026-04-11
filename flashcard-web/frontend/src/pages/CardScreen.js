@@ -74,6 +74,7 @@
                         <tr className="border-b-2 border-gray-300">
                             <th className="px-5 py-4" >Front</th>
                             <th className="px-5 py-4">Back</th>
+                            <th className="px-5 py-4 text-center">Learned</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -82,6 +83,23 @@
                                 ${selectedCard?.id === card.id ? "bg-blue-100" : ""}`} onClick={() => setSelectedCard(card)}>
                                 <td className="px-5 py-4">{card.front}</td>
                                 <td className="px-5 py-4">{card.back}</td>
+                                <td className="px-5 py-4 text-center">
+                                    <input
+                                      type="checkbox"
+                                      checked={card.learned}
+                                      onClick={(e) => e.stopPropagation()}
+                                      onChange={async (e) => {
+                                        try {
+                                          await updateCard(card.id, { ...card, learned: e.target.checked });
+                                          loadCards();
+                                        } catch (err) {
+                                          console.error("Failed to update card", err);
+                                        }
+                                      }}
+                                      id={`checkbox-${card.id}`}
+                                      className="w-4 h-4 border border-gray-400 rounded-sm"
+                                    />
+                                </td>
                             </tr>
                         ))}
                     </tbody>

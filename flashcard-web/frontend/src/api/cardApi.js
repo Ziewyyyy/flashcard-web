@@ -10,3 +10,6 @@ export const createCard = (card) => axios.post(API_URL, card);
 export const deleteCard = (id) => axios.delete(`${API_URL}/${id}`);
 
 export const updateCard = (id, card) => axios.put(`${API_URL}/${id}`, card);
+
+export const getStudyCards = (deckId) =>
+  axios.get(`http://localhost:8080/api/cards/deck/${deckId}/study`);

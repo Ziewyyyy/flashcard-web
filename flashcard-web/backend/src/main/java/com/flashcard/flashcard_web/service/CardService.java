@@ -35,4 +35,8 @@ public class CardService {
     public int countCards(Long deckId) {
         return (int) repo.countByDeckId(deckId);
     }
+
+    public long countLearnedCards(Long deckId) {
+        return repo.countByDeckIdAndLearnedTrue(deckId);
+    }
 }

@@ -43,6 +43,7 @@ public class CardController {
 
         existing.setFront(card.getFront());
         existing.setBack(card.getBack());
+        existing.setLearned(card.isLearned());
 
         cardRepository.save(existing);
 
@@ -57,6 +58,12 @@ public class CardController {
         }
         cardRepository.deleteById(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/deck/{deckId}/study")
+    public List<Card> getStudyCards(@PathVariable Long deckId)
+    {
+        return cardRepository.findByDeckIdAndLearnedFalse(deckId);
     }
 
 }

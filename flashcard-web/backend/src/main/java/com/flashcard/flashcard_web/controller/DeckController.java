@@ -1,6 +1,8 @@
 package com.flashcard.flashcard_web.controller;
 
+import com.flashcard.flashcard_web.entity.Card;
 import com.flashcard.flashcard_web.entity.Deck;
+import com.flashcard.flashcard_web.repository.CardRepository;
 import com.flashcard.flashcard_web.repository.DeckRepository;
 import com.flashcard.flashcard_web.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class DeckController {
     @Autowired
     private CardService cardService;
 
+    @Autowired
+    private CardRepository cardRepository;
+
     @PostMapping
     public Deck create(@RequestBody Deck deck) {
         return deckRepository.save(deck);
@@ -34,7 +39,10 @@ public class DeckController {
             Map<String, Object> map = new HashMap<>();
             map.put("id", deck.getId());
             map.put("name", deck.getName());
-            map.put("cardCount", cardService.countCards(deck.getId()));
+            long totalCards = cardService.countCards(deck.getId());
+            long learnedCards = cardService.countLearnedCards(deck.getId());
+            map.put("cardCount", totalCards - learnedCards);
+            map.put("learnedCount", learnedCards);
 
             return map;
         }).toList();
@@ -55,4 +63,7 @@ public class DeckController {
         deckRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
+
+
+
 }

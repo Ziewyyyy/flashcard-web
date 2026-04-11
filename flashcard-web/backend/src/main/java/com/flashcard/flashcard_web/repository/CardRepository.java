@@ -8,4 +8,6 @@ import java.util.List;
 public interface CardRepository extends JpaRepository<Card, Long> {
     List<Card> findByDeckId(Long deckId);
     long countByDeckId(Long deckId);
+    List<Card> findByDeckIdAndLearnedFalse(Long deckId);
+    long countByDeckIdAndLearnedTrue(Long deckId);
 }

@@ -161,7 +161,7 @@
                     className="border px-4 py-2"
                     onClick={() => setSelectedDeckId(deck.id)}
                   >
-                    0
+                    {deck.learnedCount}
                   </td>
 
                   <td className="border px-4 py-2">

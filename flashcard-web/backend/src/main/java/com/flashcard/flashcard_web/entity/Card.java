@@ -23,4 +23,15 @@ public class Card {
     @JoinColumn(name = "deck_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Deck deck;
+
+    @Column(nullable = false)
+    private boolean learned = false;
+
+    public boolean isLearned() {
+        return learned;
+    }
+
+    public void setLearned(boolean learned) {
+        this.learned = learned;
+    }
 }
