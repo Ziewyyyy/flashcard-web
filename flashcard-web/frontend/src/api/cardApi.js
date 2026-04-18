@@ -1,15 +1,18 @@
-import axios from "axios";
+import axiosClient from "./axiosClient";
 
-const API_URL = "http://localhost:8080/api/cards";
+const API_URL = "/api/cards";
 
 export const getCards = (deckId) =>
-  axios.get(`${API_URL}/deck/${deckId}`);
+  axiosClient.get(`${API_URL}/deck/${deckId}`);
 
-export const createCard = (card) => axios.post(API_URL, card);
+export const createCard = (card) =>
+  axiosClient.post(API_URL, card);
 
-export const deleteCard = (id) => axios.delete(`${API_URL}/${id}`);
+export const deleteCard = (id) =>
+  axiosClient.delete(`${API_URL}/${id}`);
 
-export const updateCard = (id, card) => axios.put(`${API_URL}/${id}`, card);
+export const updateCard = (id, card) =>
+  axiosClient.put(`${API_URL}/${id}`, card);
 
 export const getStudyCards = (deckId) =>
-  axios.get(`http://localhost:8080/api/cards/deck/${deckId}/study`);
+  axiosClient.get(`${API_URL}/deck/${deckId}/study`);

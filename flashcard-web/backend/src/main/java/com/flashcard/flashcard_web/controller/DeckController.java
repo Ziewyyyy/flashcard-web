@@ -2,13 +2,16 @@ package com.flashcard.flashcard_web.controller;
 
 import com.flashcard.flashcard_web.entity.Card;
 import com.flashcard.flashcard_web.entity.Deck;
+import com.flashcard.flashcard_web.entity.User;
 import com.flashcard.flashcard_web.repository.CardRepository;
 import com.flashcard.flashcard_web.repository.DeckRepository;
+import com.flashcard.flashcard_web.repository.UserRepository;
 import com.flashcard.flashcard_web.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,14 +30,20 @@ public class DeckController {
     @Autowired
     private CardRepository cardRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @PostMapping
-    public Deck create(@RequestBody Deck deck) {
+    public Deck create(@RequestBody Deck deck, Principal principal) {
+        User user = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        deck.setUser(user);
         return deckRepository.save(deck);
     }
 
     @GetMapping
-    public List<Map<String, Object>> getAll(){
-        List<Deck> decks = deckRepository.findAll();
+    public List<Map<String, Object>> getAll(Principal principal) {
+        List<Deck> decks = deckRepository.findByUserUsername(principal.getName());
         return decks.stream().map(deck -> {
             Map<String, Object> map = new HashMap<>();
             map.put("id", deck.getId());
@@ -43,7 +52,6 @@ public class DeckController {
             long learnedCards = cardService.countLearnedCards(deck.getId());
             map.put("cardCount", totalCards - learnedCards);
             map.put("learnedCount", learnedCards);
-
             return map;
         }).toList();
     }

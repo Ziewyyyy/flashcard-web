@@ -1,4 +1,5 @@
 package com.flashcard.flashcard_web.config;
+import com.flashcard.flashcard_web.service.CustomUserDetailsService;
 import com.flashcard.flashcard_web.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,7 +21,7 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

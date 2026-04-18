@@ -1,14 +1,13 @@
-import axios from "axios";
+import axiosClient from "./axiosClient";
 
-const API_URL = "http://localhost:8080/api/decks";
+const API_URL = "/api/decks";
 
-export const getDecks = () => axios.get(API_URL);
+export const getDecks = () => axiosClient.get(API_URL);
 
-export const createDeck = (deck) => axios.post(API_URL, deck);
+export const createDeck = (deck) => axiosClient.post(API_URL, deck);
 
-export const deleteDeck = (id) => axios.delete(`${API_URL}/${id}`);
+export const deleteDeck = (id) => axiosClient.delete(`${API_URL}/${id}`);
 
 export const getDeckById = (id) => {
-    return axios.get(`${API_URL}/${id}`);
+    return axiosClient.get(`${API_URL}/${id}`);
 }
-
