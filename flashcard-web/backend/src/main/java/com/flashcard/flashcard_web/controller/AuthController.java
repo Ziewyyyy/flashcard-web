@@ -1,6 +1,7 @@
 package com.flashcard.flashcard_web.controller;
 
 import com.flashcard.flashcard_web.DTO.LoginRequest;
+import com.flashcard.flashcard_web.DTO.RegisterRequest;
 import com.flashcard.flashcard_web.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody LoginRequest request){
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request){
         String token = authService.register(request.getUsername(), request.getPassword());
         return ResponseEntity.ok(Map.of("token", token));
     }
