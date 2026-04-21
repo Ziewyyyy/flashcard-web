@@ -11,3 +11,11 @@ export const deleteDeck = (id) => axiosClient.delete(`${API_URL}/${id}`);
 export const getDeckById = (id) => {
     return axiosClient.get(`${API_URL}/${id}`);
 }
+
+export const exportDecks = () => {
+  return axiosClient.get("/api/decks/export");
+};
+
+export const importDecks = (data) => {
+  return axiosClient.post("/api/decks/import", data);
+};

@@ -7,6 +7,8 @@ import { getDecks, createDeck, deleteDeck } from "../api/deckApi";
 import { createCard } from "../api/cardApi";
 import { startStudy } from "../api/studyApi";
 import { useStudy } from "../context/StudyContext";
+import { exportDecks } from "../api/deckApi";
+import { importDecks } from "../api/deckApi";
 
 function Home() {
   const [showMenu, setShowMenu] = useState(false);
@@ -98,6 +100,50 @@ function Home() {
     }
   }
 
+  const handleExport = async () => {
+    try {
+      const res = await exportDecks();
+
+      const blob = new Blob(
+        [JSON.stringify(res.data, null, 2)],
+        { type: "application/json" }
+      );
+
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      const username = res.data.user || "flashcards";
+      a.download = `${username}.json`;
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+
+    } catch (err) {
+      console.error("Export failed", err);
+    }
+  };
+
+  const handleImport = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const json = JSON.parse(text);
+
+      await importDecks(json);
+
+      alert("Import success!");
+
+      await loadDeck();
+
+    } catch (err) {
+      console.error("Import failed", err);
+      alert("Import failed!");
+    }
+  };
+
   const selectedDeck = decks.find(d => d.id === selectedDeckId);
   return (
     <>
@@ -109,8 +155,19 @@ function Home() {
 
               {showMenu && (
                 <div className="dropdown">
-                  <div className="item">Import</div>
-                  <div className="item">Export</div>
+                  <div className="item">
+                    <input
+                      type="file"
+                      accept=".json"
+                      onChange={handleImport}
+                    />
+                  </div>
+                  <div
+                    className="item"
+                    onClick={handleExport}
+                  >
+                    Export
+                  </div>
                 </div>
               )}
             </div>
@@ -258,7 +315,7 @@ function Home() {
 
       {showModalStats && selectedDeck && (() => {
         const learned = selectedDeck.learnedCount;
-        const total = selectedDeck.cardCount + selectedDeck.learnedCount; 
+        const total = selectedDeck.cardCount + selectedDeck.learnedCount;
         const notLearned = total - learned;
         const percent = total ? Math.round((learned / total) * 100) : 0;
 

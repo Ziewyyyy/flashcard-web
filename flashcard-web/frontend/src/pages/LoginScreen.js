@@ -77,19 +77,18 @@ export default function Login() {
             />
           </div>
 
-          <div>
+          <div className="flex gap-4">
             <button
               type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-2 text-white hover:bg-indigo-400"
+              className="flex-1 rounded-md bg-indigo-500 px-3 py-2 text-white hover:bg-indigo-400"
             >
               Login
             </button>
-          </div>
 
-          <div>
-            <button type="button"
+            <button
+              type="button"
               onClick={() => navigate("/register")}
-              className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-2 text-white hover:bg-indigo-400"
+              className="flex-1 rounded-md bg-indigo-500 px-3 py-2 text-white hover:bg-indigo-400"
             >
               Register
             </button>
