@@ -5,6 +5,7 @@ import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { getDecks, createDeck, deleteDeck } from "../api/deckApi";
 import { createCard } from "../api/cardApi";
+import { startStudy } from "../api/studyApi";
 
 function Home() {
   const [showMenu, setShowMenu] = useState(false);
@@ -20,9 +21,6 @@ function Home() {
   const [front, setFront] = useState("");
   const [back, setBack] = useState("");
 
-  const percent = Math.round(
-    (selectedDeck.learnedCount / selectedDeck.cardCount) * 100
-  );
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -90,6 +88,15 @@ function Home() {
     navigate("/login");
   };
 
+  const handleStartStudy = async () => {
+    try {
+      const res = await startStudy(selectedDeck.id);
+      localStorage.setItem("sessionId", res.data.id);
+    } catch (err) {
+      console.error("Failed to start study session", err);
+    }
+  }
+
   const selectedDeck = decks.find(d => d.id === selectedDeckId);
   return (
     <>
@@ -150,7 +157,8 @@ function Home() {
               <thead>
                 <tr>
                   <th className="px-4 py-2">Deck</th>
-                  <th className="px-4 py-2">Amount</th>
+                  <th className="px-4 py-2">Total</th>
+                  <th className="px-4 py-2">Remaining</th>
                   <th className="px-4 py-2">Learn</th>
                   <th className="px-4 py-2"></th>
                 </tr>
@@ -170,6 +178,12 @@ function Home() {
                       }}
                     >
                       {deck.name}
+                    </td>
+
+                    <td
+                      className="border px-4 py-2"
+                    >
+                      {deck.cardCount + deck.learnedCount}
                     </td>
 
                     <td
@@ -225,8 +239,9 @@ function Home() {
             <div className="study-right">
               <button
                 className="study-btn"
-                onClick={() => {
+                onClick={async () => {
                   setShowModalStudy(false);
+                  await handleStartStudy();
                   navigate(`/study/${selectedDeck.id}`);
                 }}
               >
@@ -242,7 +257,7 @@ function Home() {
 
       {showModalStats && selectedDeck && (() => {
         const learned = selectedDeck.learnedCount;
-        const total = selectedDeck.cardCount;
+        const total = selectedDeck.cardCount + selectedDeck.learnedCount; 
         const notLearned = total - learned;
         const percent = total ? Math.round((learned / total) * 100) : 0;
 
@@ -265,10 +280,11 @@ function Home() {
                     data={data}
                     dataKey="value"
                     outerRadius={100}
-                    label
+
+                    labelLine={false}
                   >
-                    <Cell fill="#4CAF50" /> 
-                    <Cell fill="#ccc" />     
+                    <Cell fill="#4CAF50" />
+                    <Cell fill="#ccc" />
                   </Pie>
                   <Tooltip />
                 </PieChart>
@@ -277,7 +293,7 @@ function Home() {
               <div className="mt-4">
                 <p>Progress: <b>{percent}%</b></p>
                 <p>Learned: {learned} / {total}</p>
-                <p>Study time: 120 minutes</p> 
+                <p>Study time: 120 minutes</p>
               </div>
 
               <button
