@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { getDecks, createDeck, deleteDeck } from "../api/deckApi";
 import { createCard } from "../api/cardApi";
 import { startStudy } from "../api/studyApi";
+import { useStudy } from "../context/StudyContext";
 
 function Home() {
   const [showMenu, setShowMenu] = useState(false);
@@ -13,7 +14,7 @@ function Home() {
   const [showModalCard, setShowModalCard] = useState(false);
   const [showModalStudy, setShowModalStudy] = useState(false);
   const [showModalStats, setShowModalStats] = useState(false);
-  const [decks, setDecks] = useState([]);
+  const { decks, setDecks } = useStudy();
   const [deckName, setDeckName] = useState("");
   const menuRef = useRef();
   const navigate = useNavigate();

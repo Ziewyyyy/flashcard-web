@@ -66,4 +66,10 @@ public class CardController {
         return cardRepository.findByDeckIdAndLearnedFalse(deckId);
     }
 
+    @PutMapping("/{id}/learn")
+    public ResponseEntity<?> markLearned(@PathVariable Long id) {
+        Card updated = service.markLearned(id);
+        return ResponseEntity.ok(updated);
+    }
+
 }

@@ -5,6 +5,7 @@
   import "../css/Card.css";
   import { getCards, updateCard, deleteCard } from "../api/cardApi";
   import { getDeckById } from "../api/deckApi";
+  import { markLearned } from "../api/cardApi";
 
   function CardScreen() {
     const { deckId } = useParams();

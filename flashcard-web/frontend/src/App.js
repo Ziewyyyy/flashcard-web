@@ -5,6 +5,7 @@ import StudyScreen from "./pages/StudyScreen";
 import Login from "./pages/LoginScreen";
 import Register from "./pages/RegisterScreen";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { StudyProvider } from "./context/StudyContext";
 
 function App() {
   return (

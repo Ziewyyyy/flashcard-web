@@ -6,6 +6,7 @@ export const startStudy = (deckId) => {
 
 export const endStudy = (sessionId, cardsLearned) => {
   return axiosClient.post(
-    `/api/study/end/${sessionId}?cardsLearned=${cardsLearned}`
+    `/api/study/end/${sessionId}`,
+    { cardsLearned }
   );
 };

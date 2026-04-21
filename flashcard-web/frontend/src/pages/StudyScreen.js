@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import "../css/StudyScreen.css";
 import { getCards, getStudyCards } from "../api/cardApi";
 import { endStudy } from "../api/studyApi";
+import { useStudy } from "../context/StudyContext";
+import { markLearned } from "../api/cardApi";
 
 function StudyScreen() {
     const { deckId } = useParams();
@@ -12,6 +14,7 @@ function StudyScreen() {
     const [isFinished, setIsFinished] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [learnedCount, setLearnedCount] = useState(0);
+    const { updateDeckProgress } = useStudy();
 
     const navigate = useNavigate();
 
@@ -34,12 +37,24 @@ function StudyScreen() {
         }
     };
 
-    const handleShow = () => {
+    const handleShow = async () => {
+        if (showBack) return; 
+
         setShowBack(true);
-    }
+
+        const currentCard = cards[currentIndex];
+
+        try {
+            await markLearned(currentCard.id);
+            updateDeckProgress(deckId); 
+            setLearnedCount(prev => prev + 1);
+
+        } catch (err) {
+            console.error("Failed to mark learned", err);
+        }
+    };
 
     const handleNext = () => {
-        setLearnedCount((prev) => prev + 1);
         if (currentIndex + 1 >= cards.length) {
             setIsFinished(true);
             return;
@@ -53,14 +68,14 @@ function StudyScreen() {
         const sessionId = localStorage.getItem("sessionId");
 
         try {
-            await endStudy(sessionId, learnedCount); 
-            localStorage.removeItem("sessionId");
-            navigate("/home");
+            await endStudy(sessionId, learnedCount);
         } catch (err) {
             console.error("Finish study failed", err);
         }
-    };
 
+        localStorage.removeItem("sessionId");
+        navigate("/");
+    };
     if (isLoading) {
         return (
             <div className="study-container">

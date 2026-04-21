@@ -16,3 +16,7 @@ export const updateCard = (id, card) =>
 
 export const getStudyCards = (deckId) =>
   axiosClient.get(`${API_URL}/deck/${deckId}/study`);
+
+export const markLearned = (cardId) => {
+  return axiosClient.put(`/api/cards/${cardId}/learn`);
+};

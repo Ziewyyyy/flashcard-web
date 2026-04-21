@@ -5,6 +5,8 @@ import com.flashcard.flashcard_web.service.StudySessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/study")
 @RequiredArgsConstructor
@@ -19,7 +21,8 @@ public class StudyController {
     }
 
     @PostMapping("/end/{sessionId}")
-    public StudySession end(@PathVariable Long sessionId, @RequestParam int cardLearned){
-        return studyService.endSession(sessionId, cardLearned);
+    public StudySession end(@PathVariable Long sessionId, @RequestBody Map<String, Integer> body) {
+        int cardsLearned = body.get("cardsLearned");
+        return studyService.endSession(sessionId, cardsLearned);
     }
 }

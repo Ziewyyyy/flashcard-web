@@ -39,4 +39,15 @@ public class CardService {
     public long countLearnedCards(Long deckId) {
         return repo.countByDeckIdAndLearnedTrue(deckId);
     }
+
+    public Card markLearned(Long cardId) {
+        Card card = repo.findById(cardId)
+                .orElseThrow(() -> new RuntimeException("Card not found"));
+
+        if (card.isLearned()) {
+            return card;
+        }
+        card.setLearned(true);
+        return repo.save(card);
+    }
 }
