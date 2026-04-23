@@ -33,48 +33,50 @@ export default function Register() {
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form onSubmit={handleRegister} className="space-y-6">
+        <div className="bg-white border border-gray-300 rounded-xl shadow-md p-6">
+          <form onSubmit={handleRegister} className="space-y-6">
 
-          <div>
-            <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="block w-full rounded-md border-2 border-gray-700 px-3 py-2 text-black font-medium"
-            />
-          </div>
+            <div>
+              <input
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="block w-full rounded-md border-2 border-gray-700 px-3 py-2 text-black font-medium"
+              />
+            </div>
 
-          <div>
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="block w-full rounded-md border-2 border-gray-700 px-3 py-2 text-black font-medium"
-            />
-          </div>
+            <div>
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="block w-full rounded-md border-2 border-gray-700 px-3 py-2 text-black font-medium"
+              />
+            </div>
 
-          <div>
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="block w-full rounded-md border-2 border-gray-700 px-3 py-2 text-black font-medium"
-            />
-          </div>
+            <div>
+              <input
+                type="password"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="block w-full rounded-md border-2 border-gray-700 px-3 py-2 text-black font-medium"
+              />
+            </div>
 
-          <div>
-            <button
-              type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-2 text-white hover:bg-indigo-400"
-            >
-              Register
-            </button>
-          </div>
+            <div>
+              <button
+                type="submit"
+                className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-2 text-white hover:bg-indigo-400"
+              >
+                Register
+              </button>
+            </div>
 
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );

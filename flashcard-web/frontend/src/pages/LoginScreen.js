@@ -55,46 +55,48 @@ export default function Login() {
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form onSubmit={handleLogin} className="space-y-6">
+        <div className="bg-white border border-gray-300 rounded-xl shadow-md p-6">
+          <form onSubmit={handleLogin} className="space-y-6">
 
-          <div>
-            <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="block w-full rounded-md border-2 border-gray-700 px-3 py-2 text-black font-medium"
-            />
-          </div>
+            <div>
+              <input
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="block w-full rounded-md border-2 border-gray-700 px-3 py-2 text-black font-medium"
+              />
+            </div>
 
-          <div>
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="block w-full rounded-md border-2 border-gray-700 px-3 py-2 text-black font-medium"
-            />
-          </div>
+            <div>
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="block w-full rounded-md border-2 border-gray-700 px-3 py-2 text-black font-medium"
+              />
+            </div>
 
-          <div className="flex gap-4">
-            <button
-              type="submit"
-              className="flex-1 rounded-md bg-indigo-500 px-3 py-2 text-white hover:bg-indigo-400"
-            >
-              Login
-            </button>
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                className="flex-1 rounded-md bg-indigo-500 px-3 py-2 text-white hover:bg-indigo-400"
+              >
+                Login
+              </button>
 
-            <button
-              type="button"
-              onClick={() => navigate("/register")}
-              className="flex-1 rounded-md bg-indigo-500 px-3 py-2 text-white hover:bg-indigo-400"
-            >
-              Register
-            </button>
-          </div>
+              <button
+                type="button"
+                onClick={() => navigate("/register")}
+                className="flex-1 rounded-md bg-indigo-500 px-3 py-2 text-white hover:bg-indigo-400"
+              >
+                Register
+              </button>
+            </div>
 
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );
