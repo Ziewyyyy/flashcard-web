@@ -19,7 +19,7 @@ public class CardService {
     private DeckRepository deckRepository;
 
     public List<Card> getByDeck(Long deckId){
-        return repo.findByDeckId(deckId);
+        return repo.findByDeckIdOrderByIdAsc(deckId);
     }
 
     public Card create(Card c){
@@ -52,7 +52,7 @@ public class CardService {
     }
 
     public void resetAll(Long deckId) {
-        List<Card> cards = repo.findByDeckId(deckId);
+        List<Card> cards = repo.findByDeckIdOrderByIdAsc(deckId);
         for(Card c : cards) {
             c.setLearned(false);
         }

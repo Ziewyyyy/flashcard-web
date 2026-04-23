@@ -136,7 +136,7 @@ public class DeckController {
 
             for (Map<String, Object> cardData : cards) {
 
-                boolean exists = cardRepository.findByDeckId(deck.getId())
+                boolean exists = cardRepository.findByDeckIdOrderByIdAsc(deck.getId())
                         .stream()
                         .anyMatch(c ->
                                 c.getFront().equals(cardData.get("front")) &&

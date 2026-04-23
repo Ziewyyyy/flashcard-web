@@ -23,6 +23,7 @@ public class Deck {
 
     @OneToMany(mappedBy = "deck", cascade = CascadeType.ALL)
     @JsonIgnore
+    @OrderBy("id ASC")
     private List<Card> cards;
 
     @Transient
