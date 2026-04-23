@@ -304,6 +304,16 @@ function Home() {
               >
                 Study
               </button>
+              <button
+                className="typing-btn"
+                onClick={async () => {
+                  setShowModalStudy(false);
+                  await handleStartStudy();
+                  navigate(`/typing/${selectedDeck.id}`);
+                }}
+              >
+                Typing
+              </button>
               <button onClick={() => setShowModalStudy(false)}>
                 Close
               </button>

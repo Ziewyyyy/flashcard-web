@@ -162,6 +162,12 @@ function StudyScreen() {
     return (
         <>
             <div className="study-container">
+                <button
+                    className="back-btn"
+                    onClick={() => navigate(-1)}
+                >
+                    ←
+                </button>
                 <div className="flex justify-center mb-4">
                     <div className="inline-flex">
                         <button

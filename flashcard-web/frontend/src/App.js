@@ -6,6 +6,7 @@ import Login from "./pages/LoginScreen";
 import Register from "./pages/RegisterScreen";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { StudyProvider } from "./context/StudyContext";
+import TypingScreen from "./pages/TypingScreen";
 
 function App() {
   return (
@@ -14,12 +15,12 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        <Route 
+        <Route
           path="/" element={
             <ProtectedRoute>
               <Home />
             </ProtectedRoute>
-          } 
+          }
         />
         <Route
           path="/cards/:deckId"
@@ -35,6 +36,15 @@ function App() {
           element={
             <ProtectedRoute>
               <StudyScreen />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/typing/:deckId"
+          element={
+            <ProtectedRoute>
+              <TypingScreen />
             </ProtectedRoute>
           }
         />

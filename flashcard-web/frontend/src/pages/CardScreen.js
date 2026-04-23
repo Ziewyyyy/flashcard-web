@@ -6,6 +6,7 @@ import "../css/Card.css";
 import { getCards, updateCard, deleteCard } from "../api/cardApi";
 import { getDeckById } from "../api/deckApi";
 import { resetAllCards } from "../api/cardApi";
+import { useNavigate } from "react-router-dom";
 
 
 function CardScreen() {
@@ -17,6 +18,7 @@ function CardScreen() {
   const [back, setBack] = useState("");
   const [selectedCard, setSelectedCard] = useState(null);
 
+  const navigate = useNavigate();
   useEffect(() => {
     if (deckId) {
       loadCards();
@@ -74,8 +76,15 @@ function CardScreen() {
   return (
     <>
       <div className="app">
-        <div className="card-screen">
-          <h1>{deckName}</h1>
+        <div className="card-header">
+          <button
+            className="back-btn"
+            onClick={() => navigate(-1)}
+          >
+            ←
+          </button>
+
+          <h1 className="deck-title">{deckName}</h1>
         </div>
         <div className="flex justify-center mt-6 px-4">
           <div className="w-full max-w-4xl bg-white rounded-xl shadow-lg p-6">

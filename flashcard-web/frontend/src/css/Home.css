@@ -206,9 +206,25 @@
 
   .study-btn {
     padding: 10px 20px;
-    background: #4cafef;
+    background: linear-gradient(135deg, #7b61ff, #5a9cff);
     color: white;
     border: none;
     cursor: pointer;
     border-radius: 5px;
+    font-weight: 600;
   }
+
+  .typing-btn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #7b61ff, #5a9cff);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.typing-btn:hover {
+  opacity: 0.9;
+}
