@@ -156,11 +156,15 @@ function Home() {
               {showMenu && (
                 <div className="dropdown">
                   <div className="item">
-                    <input
-                      type="file"
-                      accept=".json"
-                      onChange={handleImport}
-                    />
+                    <label className="import-btn">
+                      Import
+                      <input
+                        type="file"
+                        accept=".json"
+                        onChange={handleImport}
+                        hidden
+                      />
+                    </label>
                   </div>
                   <div
                     className="item"
@@ -218,7 +222,6 @@ function Home() {
                   <th className="px-4 py-2">Total</th>
                   <th className="px-4 py-2">Remaining</th>
                   <th className="px-4 py-2">Learn</th>
-                  <th className="px-4 py-2"></th>
                 </tr>
               </thead>
               <tbody>
@@ -252,14 +255,10 @@ function Home() {
                     </td>
 
                     <td
-                      className="border px-4 py-2"
+                      className="border px-4 py-2 text-center align-middle"
                       onClick={() => setSelectedDeckId(deck.id)}
                     >
                       {deck.learnedCount}
-                    </td>
-
-                    <td className="border px-4 py-2">
-                      <button>Study</button>
                     </td>
                   </tr>
                 ))}

@@ -20,3 +20,7 @@ export const getStudyCards = (deckId) =>
 export const markLearned = (cardId) => {
   return axiosClient.put(`/api/cards/${cardId}/learn`);
 };
+
+export const resetAllCards = (deckId) => {
+  return axiosClient.put(`/api/cards/reset/${deckId}`);
+};

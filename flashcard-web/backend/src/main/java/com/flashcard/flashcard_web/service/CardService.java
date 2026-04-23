@@ -50,4 +50,12 @@ public class CardService {
         card.setLearned(true);
         return repo.save(card);
     }
+
+    public void resetAll(Long deckId) {
+        List<Card> cards = repo.findByDeckId(deckId);
+        for(Card c : cards) {
+            c.setLearned(false);
+        }
+        repo.saveAll(cards);
+    }
 }

@@ -72,4 +72,10 @@ public class CardController {
         return ResponseEntity.ok(updated);
     }
 
+    @PutMapping("/reset/{deckId}")
+    public ResponseEntity<?> resetAll(@PathVariable Long deckId) {
+        service.resetAll(deckId);
+        return ResponseEntity.ok().build();
+    }
+
 }
