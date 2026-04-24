@@ -18,7 +18,8 @@ public class CorsConfig {
 
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000",
-                "http://localhost:5173"
+                "http://localhost:5173",
+                "https://flashcard-web.vercel.app"
         ));
 
         configuration.setAllowedMethods(Arrays.asList(
@@ -28,6 +29,7 @@ public class CorsConfig {
         configuration.setAllowedHeaders(List.of("*"));
 
         configuration.setAllowCredentials(true);
+
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
