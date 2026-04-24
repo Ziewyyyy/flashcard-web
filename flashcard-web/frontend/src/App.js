@@ -8,49 +8,65 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { StudyProvider } from "./context/StudyContext";
 import TypingScreen from "./pages/TypingScreen";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+    <StudyProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-        <Route
-          path="/" element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/cards/:deckId"
-          element={
-            <ProtectedRoute>
-              <CardScreen />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/study/:deckId"
-          element={
-            <ProtectedRoute>
-              <StudyScreen />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/cards/:deckId"
+            element={
+              <ProtectedRoute>
+                <CardScreen />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/typing/:deckId"
-          element={
-            <ProtectedRoute>
-              <TypingScreen />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/study/:deckId"
+            element={
+              <ProtectedRoute>
+                <StudyScreen />
+              </ProtectedRoute>
+            }
+          />
 
-      </Routes>
-    </BrowserRouter>
+          <Route
+            path="/typing/:deckId"
+            element={
+              <ProtectedRoute>
+                <TypingScreen />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+
+        <ToastContainer
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          pauseOnHover
+          theme="colored"
+        />
+      </BrowserRouter>
+    </StudyProvider>
   );
 }
 

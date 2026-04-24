@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { login } from "../api/authApi";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -38,11 +40,12 @@ export default function Login() {
     try {
       const res = await login({ username, password });
       localStorage.setItem("token", res.data.token);
-      alert("Login success!");
+      toast.success("Login success!");
+      setTimeout(() => navigate("/"), 1500);
       navigate("/");
     } catch (err) {
       console.error("Login failed", err);
-      alert("Login failed: " + (err.response?.data?.message || err.message));
+      toast.error("Login failed: " + (err.response?.data?.message || err.message));
     }
   };
 

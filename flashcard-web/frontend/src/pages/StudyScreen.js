@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../css/StudyScreen.css";
-import { getStudyCards, markLearned } from "../api/cardApi";
+import { getStudyCards, markLearned, createCard } from "../api/cardApi";
 import { endStudy } from "../api/studyApi";
 import { useStudy } from "../context/StudyContext";
-import { createCard } from "../api/cardApi";
 
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
@@ -15,12 +14,15 @@ function StudyScreen() {
     const navigate = useNavigate();
     const { updateDeckProgress } = useStudy();
 
+    const containerRef = useRef();
+
     const [cards, setCards] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showBack, setShowBack] = useState(false);
     const [isFinished, setIsFinished] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [learnedCount, setLearnedCount] = useState(0);
+
     const [showModalCard, setShowModalCard] = useState(false);
     const [showModalStats, setShowModalStats] = useState(false);
     const [front, setFront] = useState("");
@@ -38,6 +40,10 @@ function StudyScreen() {
     const [fontColor, setFontColor] = useState(() => {
         return localStorage.getItem("fontColor") || "#000000";
     });
+
+    useEffect(() => {
+        containerRef.current?.focus();
+    }, []);
 
     useEffect(() => {
         localStorage.setItem("fontFamily", fontFamily);
@@ -136,6 +142,28 @@ function StudyScreen() {
         }
     };
 
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if ((e.key === "Enter" || e.key === " ") && !e.repeat) {
+                e.preventDefault();
+                if (!showBack) {
+                    handleShow();
+                    return;
+                }
+                if (currentIndex + 1 >= cards.length) {
+                    setIsFinished(true);
+                    return;
+                }
+                handleNext();
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [showBack, currentIndex, cards.length]);
 
     if (isLoading) {
         return (
@@ -162,45 +190,17 @@ function StudyScreen() {
     return (
         <>
             <div className="study-container">
-                <button
-                    className="back-btn"
-                    onClick={() => navigate(-1)}
-                >
+                <button className="back-btn" onClick={() => navigate(-1)}>
                     ←
                 </button>
+
                 <div className="flex justify-center mb-4">
                     <div className="inline-flex">
-                        <button
-                            className="bg-white hover:bg-gray-100 px-4 py-2 border rounded-l-full"
-                            onClick={() => navigate("/")}
-                        >
-                            Decks
-                        </button>
-
-                        <button
-                            className="bg-white hover:bg-gray-100 px-4 py-2 border"
-                            onClick={() => setShowModalCard(true)}
-                        >
-                            Add
-                        </button>
-
-                        <button
-                            className="bg-white hover:bg-gray-100 px-4 py-2 border"
-                            onClick={() => navigate(`/cards/${deckId}`)}
-                        >
-                            Browse
-                        </button>
-
-                        <button
-                            className="bg-white hover:bg-gray-100 px-4 py-2 border"
-                            onClick={() => setShowModalStats(true)}
-                        >
-                            Stats
-                        </button>
-
-                        <button className="bg-white hover:bg-gray-100 px-4 py-2 border rounded-r-full">
-                            Sync
-                        </button>
+                        <button onClick={() => navigate("/")}>Decks</button>
+                        <button onClick={() => setShowModalCard(true)}>Add</button>
+                        <button onClick={() => navigate(`/cards/${deckId}`)}>Browse</button>
+                        <button onClick={() => setShowModalStats(true)}>Stats</button>
+                        <button>Sync</button>
                     </div>
                 </div>
 
@@ -216,20 +216,18 @@ function StudyScreen() {
                         <select
                             value={fontFamily}
                             onChange={(e) => setFontFamily(e.target.value)}
-                            className="font-select"
                         >
-                            <option value="Arial">Arial</option>
-                            <option value="Times New Roman">Times New Roman</option>
-                            <option value="Courier New">Courier New</option>
-                            <option value="Verdana">Verdana</option>
-                            <option value="Tahoma">Tahoma</option>
+                            <option>Arial</option>
+                            <option>Times New Roman</option>
+                            <option>Courier New</option>
+                            <option>Verdana</option>
+                            <option>Tahoma</option>
                         </select>
 
                         <input
                             type="color"
                             value={fontColor}
                             onChange={(e) => setFontColor(e.target.value)}
-                            className="w-8 h-8 border rounded cursor-pointer ml-2"
                         />
                     </div>
 
@@ -237,7 +235,7 @@ function StudyScreen() {
                         className="card-front"
                         style={{
                             fontSize: `${fontSize}px`,
-                            fontFamily: fontFamily,
+                            fontFamily,
                             color: fontColor
                         }}
                     >
@@ -249,7 +247,7 @@ function StudyScreen() {
                             className="card-back"
                             style={{
                                 fontSize: `${fontSize}px`,
-                                fontFamily: fontFamily,
+                                fontFamily,
                                 color: fontColor
                             }}
                         >
@@ -275,30 +273,11 @@ function StudyScreen() {
                 <div className="modal-overlay">
                     <div className="modal">
                         <h3>Create Card</h3>
+                        <input value={front} onChange={(e) => setFront(e.target.value)} />
+                        <input value={back} onChange={(e) => setBack(e.target.value)} />
 
-                        <input
-                            type="text"
-                            placeholder="Front"
-                            value={front}
-                            onChange={(e) => setFront(e.target.value)}
-                        />
-
-                        <input
-                            type="text"
-                            placeholder="Back"
-                            value={back}
-                            onChange={(e) => setBack(e.target.value)}
-                        />
-
-                        <div className="modal-actions">
-                            <button onClick={() => setShowModalCard(false)}>
-                                Cancel
-                            </button>
-
-                            <button onClick={handleCreateCard}>
-                                Create
-                            </button>
-                        </div>
+                        <button onClick={() => setShowModalCard(false)}>Cancel</button>
+                        <button onClick={handleCreateCard}>Create</button>
                     </div>
                 </div>
             )}
@@ -310,24 +289,13 @@ function StudyScreen() {
 
                 return (
                     <div className="modal-overlay">
-                        <div className="modal stats-modal text-center">
-
-                            <h2 className="text-xl font-bold mb-4">
-                                Study Stats
-                            </h2>
-
-                            <div className="mt-4">
-                                <p>Progress: <b>{percent}%</b></p>
-                                <p>Learned: {learned} / {total}</p>
-                            </div>
-
-                            <button
-                                className="mt-4 px-4 py-2 bg-gray-300 rounded"
-                                onClick={() => setShowModalStats(false)}
-                            >
+                        <div className="modal text-center">
+                            <h2>Study Stats</h2>
+                            <p>Progress: {percent}%</p>
+                            <p>{learned} / {total}</p>
+                            <button onClick={() => setShowModalStats(false)}>
                                 Close
                             </button>
-
                         </div>
                     </div>
                 );

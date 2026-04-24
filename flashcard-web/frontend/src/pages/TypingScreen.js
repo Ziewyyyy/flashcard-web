@@ -1,32 +1,51 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import axiosClient from "../api/axiosClient";
 import "../css/Typing.css";
-import { useNavigate } from "react-router-dom";
 
 export default function TypingScreen() {
     const { deckId } = useParams();
+    const navigate = useNavigate();
+
     const [cards, setCards] = useState([]);
     const [current, setCurrent] = useState(0);
     const [input, setInput] = useState("");
     const [result, setResult] = useState(null);
 
+    const inputRef = useRef();
+
+    const card = cards[current];
     const isLastCard = current === cards.length - 1;
 
-    const navigate = useNavigate();
+    useEffect(() => {
+        const loadCards = async () => {
+            const res = await axiosClient.get(`/api/cards/deck/${deckId}`);
+            setCards(res.data);
+        };
+        loadCards();
+    }, [deckId]);
 
     useEffect(() => {
-        loadCards();
-    }, []);
+        inputRef.current?.focus();
+    }, [current]);
 
-    const loadCards = async () => {
-        const res = await axiosClient.get(`/api/cards/deck/${deckId}`);
-        setCards(res.data);
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter" && !e.repeat) {
+            e.preventDefault();
+
+            if (!result && input.trim() !== "") {
+                checkAnswer();
+                return;
+            }
+
+            if (result && !isLastCard) {
+                nextCard();
+                return;
+            }
+        }
     };
 
     if (!cards.length) return <div>No cards available</div>;
-
-    const card = cards[current];
 
     const checkAnswer = () => {
         if (input.trim().toLowerCase() === card.back.toLowerCase()) {
@@ -44,21 +63,21 @@ export default function TypingScreen() {
 
     return (
         <div className="typing-container">
-            <button
-                className="back-btn"
-                onClick={() => navigate(-1)}
-            >
+            <button className="back-btn" onClick={() => navigate(-1)}>
                 ←
             </button>
+
             <div className="card-box">
                 <p className="card-text">{card.front}</p>
             </div>
 
             <input
+                ref={inputRef}
                 type="text"
                 placeholder="Type your answer..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
             />
 
             <div className="actions flex gap-4 mt-6">
