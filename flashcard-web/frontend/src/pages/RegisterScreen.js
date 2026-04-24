@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { register } from "../api/authApi";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -16,11 +18,11 @@ export default function Register() {
     }
     try {
       const res = await register({ username, password });
-      alert("Register success!");
+      toast.success("Register success!");
 
       navigate("/login");
     } catch (err) {
-      alert("Register failed: " + err.message);
+      toast.error("Register failed: " + err.message);
     }
   };
 
