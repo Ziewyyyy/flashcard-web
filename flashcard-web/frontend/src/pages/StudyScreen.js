@@ -204,14 +204,12 @@ function StudyScreen() {
                     ←
                 </button>
 
-                <div className="flex justify-center mb-4">
-                    <div className="inline-flex">
-                        <button onClick={() => navigate("/")}>Decks</button>
-                        <button onClick={() => setShowModalCard(true)}>Add</button>
-                        <button onClick={() => navigate(`/cards/${deckId}`)}>Browse</button>
-                        <button onClick={() => setShowModalStats(true)}>Stats</button>
-                        <button>Sync</button>
-                    </div>
+                <div className="inline-flex mt-4 mb-6 justify-center">
+                    <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-l-full" onClick={() => navigate("/")}>Decks</button>
+                    <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" onClick={() => setShowModalCard(true)}>Add</button>
+                    <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" onClick={() => navigate(`/cards/${deckId}`)}>Browse</button>
+                    <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" onClick={() => setShowModalStats(true)}>Stats</button>
+                    <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-r-full">Sync</button>
                 </div>
 
                 <div className="card-panel">
@@ -283,11 +281,18 @@ function StudyScreen() {
                 <div className="modal-overlay">
                     <div className="modal">
                         <h3>Create Card</h3>
-                        <input value={front} onChange={(e) => setFront(e.target.value)} />
-                        <input value={back} onChange={(e) => setBack(e.target.value)} />
+                        <input type="text" placeholder="Front" value={front} onChange={(e) => setFront(e.target.value)} />
+                        <input type="text" placeholder="Back" value={back} onChange={(e) => setBack(e.target.value)} />
 
-                        <button onClick={() => setShowModalCard(false)}>Cancel</button>
-                        <button onClick={handleCreateCard}>Create</button>
+                        <div className="modal-actions">
+                            <button onClick={() => setShowModalCard(false)}>
+                                Cancel
+                            </button>
+
+                            <button onClick={handleCreateCard}>
+                                Create
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

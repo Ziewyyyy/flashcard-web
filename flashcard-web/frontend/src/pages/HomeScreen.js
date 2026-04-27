@@ -269,20 +269,20 @@ function Home() {
                     </td>
 
                     <td
-                      className="border px-4 py-2"
+                      className="border px-4 py-2 text-blue-600 hover:underline"
                     >
                       {deck.cardCount + deck.learnedCount}
                     </td>
 
                     <td
-                      className="border px-4 py-2"
+                      className="border px-4 py-2 text-blue-600 hover:underline"
                       onClick={() => setSelectedDeckId(deck.id)}
                     >
                       {deck.cardCount}
                     </td>
 
                     <td
-                      className="border px-4 py-2 text-center align-middle"
+                      className="border px-4 py-2 text-center align-middle text-blue-600 hover:underline"
                       onClick={() => setSelectedDeckId(deck.id)}
                     >
                       {deck.learnedCount}
