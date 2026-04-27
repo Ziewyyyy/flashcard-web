@@ -87,10 +87,12 @@ function StudyScreen() {
         }
     };
 
-    const handleShow = async () => {
+    const handleShow = () => {
         if (showBack) return;
-
         setShowBack(true);
+    };
+
+    const handleEasy = async () => {
         const currentCard = cards[currentIndex];
 
         try {
@@ -100,9 +102,15 @@ function StudyScreen() {
         } catch (err) {
             console.error("Failed to mark learned", err);
         }
+
+        goNext();
     };
 
-    const handleNext = () => {
+    const handleHard = () => {
+        goNext();
+    };
+
+    const goNext = () => {
         if (currentIndex + 1 >= cards.length) {
             setIsFinished(true);
             return;
@@ -154,17 +162,24 @@ function StudyScreen() {
 
     useEffect(() => {
         const handleKeyDown = (e) => {
-            if ((e.key === "Enter" || e.key === " ") && !e.repeat) {
-                e.preventDefault();
+            if (e.repeat) return;
+
+            if (e.key === "1") {
+                if (showBack) {
+                    handleHard();
+                }
+            }
+            if (e.key === "2" || e.key === "Enter") {
                 if (!showBack) {
                     handleShow();
-                    return;
+                } else {
+                    handleEasy();
                 }
-                if (currentIndex + 1 >= cards.length) {
-                    setIsFinished(true);
-                    return;
+            }
+            if (e.key === " ") {
+                if (!showBack) {
+                    handleShow();
                 }
-                handleNext();
             }
         };
 
@@ -264,15 +279,27 @@ function StudyScreen() {
                     )}
                 </div>
 
+                <div className="progress-bar">
+                    <div
+                        className="progress"
+                        style={{ width: `${(currentIndex / cards.length) * 100}%` }}
+                    />
+                </div>
+
                 <div className="control-panel">
                     {!showBack ? (
                         <button className="btn" onClick={handleShow}>
                             Show
                         </button>
                     ) : (
-                        <button className="btn" onClick={handleNext}>
-                            Next
-                        </button>
+                        <div className="flex gap-4 justify-center">
+                            <button className="btn bg-red-500" onClick={handleHard}>
+                                Hard
+                            </button>
+                            <button className="btn bg-green-500" onClick={handleEasy}>
+                                Easy
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>
