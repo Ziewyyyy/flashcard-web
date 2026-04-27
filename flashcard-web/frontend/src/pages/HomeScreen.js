@@ -9,6 +9,7 @@ import { startStudy } from "../api/studyApi";
 import { useStudy } from "../context/StudyContext";
 import { exportDecks } from "../api/deckApi";
 import { importDecks } from "../api/deckApi";
+import { toast } from "react-toastify";
 
 function Home() {
   const [showMenu, setShowMenu] = useState(false);
@@ -23,6 +24,7 @@ function Home() {
   const [selectedDeckId, setSelectedDeckId] = useState(null);
   const [front, setFront] = useState("");
   const [back, setBack] = useState("");
+  const [isShuffle, setIsShuffle] = useState(false);
 
 
   useEffect(() => {
@@ -134,13 +136,38 @@ function Home() {
 
       await importDecks(json);
 
-      alert("Import success!");
+      toast.success("Import success!");
 
       await loadDeck();
 
     } catch (err) {
       console.error("Import failed", err);
-      alert("Import failed!");
+      toast.error("Import failed!");
+    }
+  };
+
+  const handleShuffleDeck = () => {
+    const newState = !isShuffle;
+    setIsShuffle(newState);
+
+    if (newState) {
+      sessionStorage.setItem("shuffle", "true");
+      toast.info("Shuffle ON");
+    } else {
+      sessionStorage.removeItem("shuffle");
+      toast.info("Shuffle OFF");
+    }
+  };
+
+  const handleReverse = () => {
+    const current = sessionStorage.getItem("reverse");
+
+    if (current) {
+      sessionStorage.removeItem("reverse");
+      toast.info("Reverse OFF");
+    } else {
+      sessionStorage.setItem("reverse", "true");
+      toast.info("Reverse ON");
     }
   };
 
@@ -290,6 +317,12 @@ function Home() {
             <div className="study-left">
               <h2>{selectedDeck.name}
                 <p>Cards: {selectedDeck.cardCount}</p>
+                <button className="shuffle-btn" onClick={handleShuffleDeck}>
+                  Shuffle
+                </button>
+                <button className="shuffle-btn" onClick={handleReverse}>
+                  Reverse
+                </button>
               </h2>
             </div>
 
@@ -314,7 +347,13 @@ function Home() {
               >
                 Typing
               </button>
-              <button onClick={() => setShowModalStudy(false)}>
+              <button
+                onClick={() => {
+                  setShowModalStudy(false);
+                  sessionStorage.removeItem("shuffle");
+                  sessionStorage.removeItem("reverse");
+                }}
+              >
                 Close
               </button>
             </div>

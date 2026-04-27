@@ -28,6 +28,8 @@ function StudyScreen() {
     const [front, setFront] = useState("");
     const [back, setBack] = useState("");
 
+    const isReverse = sessionStorage.getItem("reverse");
+
     const [fontSize, setFontSize] = useState(() => {
         const saved = localStorage.getItem("fontSize");
         return saved && !isNaN(saved) ? Number(saved) : 24;
@@ -65,11 +67,19 @@ function StudyScreen() {
         try {
             setIsLoading(true);
             const res = await getStudyCards(deckId);
-            setCards(res.data);
 
-            if (res.data.length === 0) {
-                setIsFinished(true);
+            let cards = res.data;
+
+            const isShuffle = sessionStorage.getItem("shuffle");
+
+            if (isShuffle) {
+                for (let i = cards.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [cards[i], cards[j]] = [cards[j], cards[i]];
+                }
             }
+
+            setCards(cards);
         } catch (err) {
             console.error("Failed to load cards", err);
         } finally {
@@ -239,7 +249,7 @@ function StudyScreen() {
                             color: fontColor
                         }}
                     >
-                        {currentCard.front}
+                        {isReverse ? currentCard.back : currentCard.front}
                     </div>
 
                     {showBack && (
@@ -251,7 +261,7 @@ function StudyScreen() {
                                 color: fontColor
                             }}
                         >
-                            {currentCard.back}
+                            {isReverse ? currentCard.front : currentCard.back}
                         </div>
                     )}
                 </div>

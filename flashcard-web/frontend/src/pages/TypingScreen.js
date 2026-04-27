@@ -17,17 +17,28 @@ export default function TypingScreen() {
     const card = cards[current];
     const isLastCard = current === cards.length - 1;
 
+    const isReverse = sessionStorage.getItem("reverse");
+
     useEffect(() => {
         const loadCards = async () => {
             const res = await axiosClient.get(`/api/cards/deck/${deckId}`);
-            setCards(res.data);
+
+            let cards = res.data;
+
+            const isShuffle = sessionStorage.getItem("shuffle");
+
+            if (isShuffle) {
+                for (let i = cards.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [cards[i], cards[j]] = [cards[j], cards[i]];
+                }
+            }
+
+            setCards(cards);
         };
+
         loadCards();
     }, [deckId]);
-
-    useEffect(() => {
-        inputRef.current?.focus();
-    }, [current]);
 
     const handleKeyDown = (e) => {
         if (e.key === "Enter" && !e.repeat) {
@@ -45,10 +56,16 @@ export default function TypingScreen() {
         }
     };
 
+
+    
+
     if (!cards.length) return <div>No cards available</div>;
+    if (!card) return <div>Loading...</div>;
 
     const checkAnswer = () => {
-        if (input.trim().toLowerCase() === card.back.toLowerCase()) {
+        const correctAnswer = isReverse ? card.front : card.back;
+
+        if (input.trim().toLowerCase() === correctAnswer.toLowerCase()) {
             setResult("correct");
         } else {
             setResult("wrong");
@@ -68,7 +85,9 @@ export default function TypingScreen() {
             </button>
 
             <div className="card-box">
-                <p className="card-text">{card.front}</p>
+                <p className="card-text">
+                    {isReverse ? card.back : card.front}
+                </p>
             </div>
 
             <input
