@@ -42,9 +42,9 @@ export default function Login() {
       const res = await login({ username, password });
       console.log("LOGIN RESPONSE:", res);
       localStorage.setItem("token", res.data.token);
-      toast.success("Login success!");
-      setTimeout(() => navigate("/"), 1500);
-      navigate("/");
+      toast.success("Login success!", {
+        onClose: () => navigate("/")
+      });
     } catch (err) {
       console.error("Login failed", err);
       toast.error("Login failed: " + (err.response?.data?.message || err.message));
@@ -53,7 +53,6 @@ export default function Login() {
 
   return (
     <>
-      <ToastContainer />
 
       <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
