@@ -70,8 +70,8 @@ Update `application.properties`:
 
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/flashcard
-spring.datasource.username=your_user
-spring.datasource.password=your_password
+spring.datasource.username=postgres
+spring.datasource.password=123456
 ```
 
 Run backend:
@@ -111,13 +111,6 @@ flashcard-web/
 ├── frontend/       # React App
 ├── README.md
 ```
-
----
-
-## 📸 Screenshots
-
-(Add your UI screenshots here)
-
 ---
 
 ## 🔥 Future Improvements
@@ -126,21 +119,8 @@ flashcard-web/
 * 📱 Mobile responsive improvements
 * 📈 Learning analytics dashboard
 * 🤖 AI-generated flashcards
-
----
-
-## 🤝 Contributing
-
-Pull requests are welcome. For major changes, please open an issue first.
-
----
-
-## 📄 License
-
-This project is open-source and available under the MIT License.
-
 ---
 
 ## 👨‍💻 Author
 
-* GitHub: https://github.com/your-username
+* GitHub: https://github.com/Ziewyyyy
