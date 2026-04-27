@@ -27,6 +27,7 @@ function StudyScreen() {
     const [showModalStats, setShowModalStats] = useState(false);
     const [front, setFront] = useState("");
     const [back, setBack] = useState("");
+    const [progressCount, setProgressCount] = useState(0);
 
     const isReverse = sessionStorage.getItem("reverse");
 
@@ -90,6 +91,7 @@ function StudyScreen() {
     const handleShow = () => {
         if (showBack) return;
         setShowBack(true);
+        setProgressCount(prev => prev + 1);
     };
 
     const handleEasy = async () => {
@@ -282,7 +284,7 @@ function StudyScreen() {
                 <div className="progress-bar">
                     <div
                         className="progress"
-                        style={{ width: `${(currentIndex / cards.length) * 100}%` }}
+                        style={{ width: `${(progressCount / cards.length) * 100}%` }}
                     />
                 </div>
 
