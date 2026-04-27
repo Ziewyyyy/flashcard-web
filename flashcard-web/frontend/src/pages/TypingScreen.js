@@ -11,6 +11,7 @@ export default function TypingScreen() {
     const [current, setCurrent] = useState(0);
     const [input, setInput] = useState("");
     const [result, setResult] = useState(null);
+    const [progressCount, setProgressCount] = useState(0);
 
     const inputRef = useRef();
 
@@ -57,7 +58,7 @@ export default function TypingScreen() {
     };
 
 
-    
+
 
     if (!cards.length) return <div>No cards available</div>;
     if (!card) return <div>Loading...</div>;
@@ -70,7 +71,9 @@ export default function TypingScreen() {
         } else {
             setResult("wrong");
         }
-    };
+
+        setProgressCount(prev => prev + 1); 
+    };  
 
     const nextCard = () => {
         setInput("");
@@ -98,6 +101,13 @@ export default function TypingScreen() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
             />
+
+            <div className="progress-bar">
+                <div
+                    className="progress"
+                    style={{ width: `${(progressCount / cards.length) * 100}%` }}
+                />
+            </div>
 
             <div className="actions flex gap-4 mt-6">
 

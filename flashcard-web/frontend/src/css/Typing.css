@@ -175,3 +175,20 @@
     background: #f0f0f0;
     transform: translateY(-1px);
 }
+
+.progress-bar {
+    width: 520px;
+    margin-top: 15px;
+    height: 6px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(135deg, #5f9cff, #7b61ff);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
