@@ -4,7 +4,7 @@ import "../css/CreateDeck.css";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { getDecks, createDeck, deleteDeck } from "../api/deckApi";
-import { createCard } from "../api/cardApi";
+import { createCard, getCards } from "../api/cardApi";
 import { startStudy } from "../api/studyApi";
 import { useStudy } from "../context/StudyContext";
 import { exportDecks } from "../api/deckApi";
@@ -25,6 +25,10 @@ function Home() {
   const [front, setFront] = useState("");
   const [back, setBack] = useState("");
   const [isShuffle, setIsShuffle] = useState(false);
+  const [duplicateCards, setDuplicateCards] = useState([]);
+  const [showDuplicateModal, setShowDuplicateModal] = useState(false);
+  const [allCards, setAllCards] = useState([]);
+
 
 
   useEffect(() => {
@@ -41,6 +45,24 @@ function Home() {
   useEffect(() => {
     loadDeck();
   }, []);
+
+  useEffect(() => {
+    if (showModalCard && selectedDeckId) {
+      loadCardsForDeck(selectedDeckId);
+    }
+  }, [showModalCard, selectedDeckId]);
+
+  useEffect(() => {
+    if (!front.trim()) {
+      setDuplicateCards([]);
+      return;
+    }
+    const matches = allCards.filter(
+      (card) => card.front.trim().toLowerCase() === front.trim().toLowerCase()
+    );
+    setDuplicateCards(matches);
+  }, [front, allCards]);
+
 
   const loadDeck = async () => {
     try {
@@ -78,9 +100,7 @@ function Home() {
     if (!front.trim() || !back.trim() || !selectedDeckId) return;
     try {
       await createCard({ deck: { id: selectedDeckId }, front, back });
-      setShowModalCard(false);
-      setFront("");
-      setBack("");
+      closeCardModal();
       await loadDeck();
       console.log("Created card in deck:", selectedDeckId);
     } catch (err) {
@@ -171,10 +191,27 @@ function Home() {
     }
   };
 
+  const loadCardsForDeck = async (deckId) => {
+    try {
+      const res = await getCards(deckId);
+      setAllCards(res.data);
+    } catch (err) {
+      console.error("Failed to load cards", err);
+    }
+  };
+
+  const closeCardModal = () => {
+    setShowModalCard(false);
+    setFront("");
+    setBack("");
+    setDuplicateCards([]);
+    setAllCards([]);
+  };
+
   const selectedDeck = decks.find(d => d.id === selectedDeckId);
   return (
     <>
-      <div className="app">
+      <div className="app" onClick={() => setSelectedDeckId(null)}>
         <div className="topbar flex justify-between items-center px-4">
           <div className="menu-left flex gap-4 items-center">
             <div className="file-menu" ref={menuRef}>
@@ -257,6 +294,7 @@ function Home() {
                     key={deck.id}
                     className={`cursor-pointer ${selectedDeckId === deck.id ? "selected-row" : ""
                       }`}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <td
                       className="border px-4 py-2 text-blue-600 hover:underline"
@@ -269,20 +307,20 @@ function Home() {
                     </td>
 
                     <td
-                      className="border px-4 py-2 text-blue-600 hover:underline"
+                      className="border px-4 py-2 hover:underline"
                     >
                       {deck.cardCount + deck.learnedCount}
                     </td>
 
                     <td
-                      className="border px-4 py-2 text-blue-600 hover:underline"
+                      className="border px-4 py-2 hover:underline"
                       onClick={() => setSelectedDeckId(deck.id)}
                     >
                       {deck.cardCount}
                     </td>
 
                     <td
-                      className="border px-4 py-2 text-center align-middle text-blue-600 hover:underline"
+                      className="border px-4 py-2 text-center align-middle hover:underline"
                       onClick={() => setSelectedDeckId(deck.id)}
                     >
                       {deck.learnedCount}
@@ -444,12 +482,23 @@ function Home() {
       {showModalCard && (
         <div className="modal-overlay">
           <div className="modal">
-            <h3>Create Card</h3>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3>Create Card</h3>
+              {duplicateCards.length > 0 && (
+                <span
+                  style={{ color: "#fe0000ff", cursor: "pointer", fontSize: "13px", textDecoration: "underline" }}
+                  onClick={() => setShowDuplicateModal(true)}
+                >
+                  Show Duplicates ({duplicateCards.length})
+                </span>
+              )}
+            </div>
 
             <input
               type="text"
               placeholder="Front"
               value={front}
+              style={{ borderColor: duplicateCards.length > 0 ? "red" : undefined }}
               onChange={(e) => setFront(e.target.value)}
             />
 
@@ -461,13 +510,32 @@ function Home() {
             />
 
             <div className="modal-actions">
-              <button onClick={() => setShowModalCard(false)}>
+              <button onClick={closeCardModal}>
                 Cancel
               </button>
+              <button onClick={handleCreateCard}>Create</button>
+            </div>
+          </div>
+        </div>
+      )}
 
-              <button onClick={handleCreateCard}>
-                Create
-              </button>
+      {showDuplicateModal && (
+        <div className="modal-overlay" style={{ zIndex: 1100 }}>
+          <div className="modal">
+            <h3>Duplicate Cards</h3>
+            {duplicateCards.map((card) => (
+              <div key={card.id} style={{
+                border: "1px solid #e5e7eb",
+                borderRadius: "8px",
+                padding: "12px",
+                marginBottom: "8px"
+              }}>
+                <div><b>Front:</b> {card.front}</div>
+                <div><b>Back:</b> {card.back}</div>
+              </div>
+            ))}
+            <div className="modal-actions">
+              <button onClick={() => setShowDuplicateModal(false)}>Close</button>
             </div>
           </div>
         </div>
