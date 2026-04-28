@@ -25,4 +25,9 @@ public class StudyController {
         int cardsLearned = body.get("cardsLearned");
         return studyService.endSession(sessionId, cardsLearned);
     }
+
+    @GetMapping("/stats")
+    public Map<String, Object> stats() {
+        return studyService.getStats();
+    }
 }
