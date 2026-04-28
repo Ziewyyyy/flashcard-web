@@ -10,3 +10,7 @@ export const endStudy = (sessionId, cardsLearned) => {
     { cardsLearned }
   );
 };
+
+export const getStudyStats = () => {
+  return axiosClient.get("/api/study/stats");
+};

@@ -5,7 +5,7 @@ import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { getDecks, createDeck, deleteDeck } from "../api/deckApi";
 import { createCard, getCards } from "../api/cardApi";
-import { startStudy } from "../api/studyApi";
+import { startStudy, getStudyStats } from "../api/studyApi";
 import { useStudy } from "../context/StudyContext";
 import { exportDecks } from "../api/deckApi";
 import { importDecks } from "../api/deckApi";
@@ -28,7 +28,7 @@ function Home() {
   const [duplicateCards, setDuplicateCards] = useState([]);
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
   const [allCards, setAllCards] = useState([]);
-
+  const [studyStats, setStudyStats] = useState(null);
 
 
   useEffect(() => {
@@ -62,6 +62,12 @@ function Home() {
     );
     setDuplicateCards(matches);
   }, [front, allCards]);
+
+  useEffect(() => {
+    if (showModalStats) {
+      loadStats();
+    }
+  }, [showModalStats]);
 
 
   const loadDeck = async () => {
@@ -208,7 +214,40 @@ function Home() {
     setAllCards([]);
   };
 
+  const loadStats = async () => {
+    try {
+      const res = await getStudyStats();
+      setStudyStats(res.data);
+    } catch (err) {
+      console.error("Load stats failed", err);
+    }
+  };
+
+  const formatTime = (seconds) => {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+
+    return `${h}h ${m}m ${s}s`;
+  };
+
   const selectedDeck = decks.find(d => d.id === selectedDeckId);
+
+  const totalCardsAll = decks.reduce(
+    (sum, d) => sum + d.cardCount + d.learnedCount,
+    0
+  );
+
+  const learnedAll = decks.reduce(
+    (sum, d) => sum + d.learnedCount,
+    0
+  );
+
+  const remainingAll = totalCardsAll - learnedAll;
+  const percentAll = totalCardsAll
+    ? Math.round((learnedAll / totalCardsAll) * 100)
+    : 0;
+
   return (
     <>
       <div className="app" onClick={() => setSelectedDeckId(null)}>
@@ -267,9 +306,12 @@ function Home() {
           >
             Browse
           </button>
-          <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
-            disabled={!selectedDeckId}
-            onClick={() => setShowModalStats(true)}
+          <button
+            className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowModalStats(true);
+            }}
           >
             Stats
           </button>
@@ -399,9 +441,15 @@ function Home() {
         </div>
       )}
 
-      {showModalStats && selectedDeck && (() => {
-        const learned = selectedDeck.learnedCount;
-        const total = selectedDeck.cardCount + selectedDeck.learnedCount;
+      {showModalStats && (() => {
+
+        const isGlobal = !selectedDeck;
+
+        const learned = isGlobal ? learnedAll : selectedDeck.learnedCount;
+        const total = isGlobal
+          ? totalCardsAll
+          : selectedDeck.cardCount + selectedDeck.learnedCount;
+
         const notLearned = total - learned;
         const percent = total ? Math.round((learned / total) * 100) : 0;
 
@@ -410,23 +458,23 @@ function Home() {
           { name: "Remaining", value: notLearned },
         ];
 
+        const deckTime = selectedDeck
+          ? studyStats?.timeByDeck?.[selectedDeck.id] || 0
+          : 0;
+
+        const totalTime = studyStats?.totalTime || 0;
+
         return (
           <div className="modal-overlay">
             <div className="modal stats-modal text-center">
 
               <h2 className="text-xl font-bold mb-4">
-                {selectedDeck.name} - Stats
+                {isGlobal ? "All Decks Stats" : `${selectedDeck.name} - Stats`}
               </h2>
 
               <div className="flex justify-center">
                 <PieChart width={250} height={250}>
-                  <Pie
-                    data={data}
-                    dataKey="value"
-                    outerRadius={100}
-
-                    labelLine={false}
-                  >
+                  <Pie data={data} dataKey="value" outerRadius={100}>
                     <Cell fill="#4CAF50" />
                     <Cell fill="#ccc" />
                   </Pie>
@@ -437,7 +485,15 @@ function Home() {
               <div className="mt-4">
                 <p>Progress: <b>{percent}%</b></p>
                 <p>Learned: {learned} / {total}</p>
-                <p>Study time: 120 minutes</p>
+                <p>Remaining: {notLearned}</p>
+
+                <hr className="my-2" />
+
+                {selectedDeck ? (
+                  <p>Study time: <b>{formatTime(deckTime)}</b></p>
+                ) : (
+                  <p>Total study time: <b>{formatTime(totalTime)}</b></p>
+                )}
               </div>
 
               <button

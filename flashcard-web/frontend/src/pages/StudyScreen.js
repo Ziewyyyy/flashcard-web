@@ -64,6 +64,20 @@ function StudyScreen() {
         loadCards();
     }, [deckId]);
 
+    useEffect(() => {
+        return () => {
+            endSession();
+        };
+    }, []);
+
+    useEffect(() => {
+        window.addEventListener("beforeunload", endSession);
+
+        return () => {
+            window.removeEventListener("beforeunload", endSession);
+        };
+    }, []);
+
     const loadCards = async () => {
         try {
             setIsLoading(true);
@@ -122,15 +136,7 @@ function StudyScreen() {
     };
 
     const finishStudy = async () => {
-        const sessionId = localStorage.getItem("sessionId");
-
-        try {
-            await endStudy(sessionId, learnedCount);
-        } catch (err) {
-            console.error("Finish study failed", err);
-        }
-
-        localStorage.removeItem("sessionId");
+        await endSession(); 
         navigate("/");
     };
 
@@ -160,6 +166,19 @@ function StudyScreen() {
         } catch (err) {
             console.error("Create card failed", err);
         }
+    };
+
+    const endSession = async () => {
+        const sessionId = localStorage.getItem("sessionId");
+        if (!sessionId) return;
+
+        try {
+            await endStudy(sessionId, learnedCount);
+        } catch (err) {
+            console.error("End session failed", err);
+        }
+
+        localStorage.removeItem("sessionId");
     };
 
     useEffect(() => {
