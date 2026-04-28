@@ -492,7 +492,11 @@ function Home() {
                 {selectedDeck ? (
                   <p>Study time: <b>{formatTime(deckTime)}</b></p>
                 ) : (
-                  <p>Total study time: <b>{formatTime(totalTime)}</b></p>
+                  <>
+                    <p>Total study time: <b>{formatTime(totalTime)}</b></p>
+                    <p>🔥 Streak: <b>{studyStats?.streak || 0} days</b></p>
+                    <p>🏆 Longest streak: <b>{studyStats?.longestStreak || 0} days</b></p>
+                  </>
                 )}
               </div>
 
