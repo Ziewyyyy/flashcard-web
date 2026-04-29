@@ -5,9 +5,9 @@ export const login = (data) => {
 }
 
 export const register = (data) => {
-  return axios.post(`${API}/register`, data);
+  return axiosClient.post("/api/auth/register", data);
 };
 
 export const googleLogin = (idToken) => {
-  return axios.post(`${API}/google`, { idToken });
-}
+  return axiosClient.post("/api/auth/google", { idToken });
+};
