@@ -46,12 +46,26 @@ function CardScreen() {
   const loadCards = async () => {
     try {
       const res = await getCards(deckId);
-      setCards(res.data);
-      setFilteredCards(res.data);
+      const newCards = res.data;
+      setCards(newCards);
+
+      const term = searchTerm.trim().toLowerCase();
+      if (!term) {
+        setFilteredCards(newCards);
+      } else {
+        setFilteredCards(
+          newCards.filter(
+            (card) =>
+              card.front.toLowerCase().includes(term) ||
+              card.back.toLowerCase().includes(term)
+          )
+        );
+      }
     } catch (err) {
       console.error("Failed to load cards", err);
     }
   };
+
 
   const handleEditCard = async () => {
     try {
