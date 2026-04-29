@@ -18,7 +18,6 @@ public class CorsConfig {
         config.setAllowedOrigins(List.of(
                 "https://anki-clone-v2.vercel.app"
                 "http://localhost:5173",
-                "https://anki-clone-v2.vercel.app"
         ));
 
         config.setAllowedHeaders(List.of("*"));
