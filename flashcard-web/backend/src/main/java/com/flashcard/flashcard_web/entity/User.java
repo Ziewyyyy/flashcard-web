@@ -23,5 +23,9 @@ public class User {
     @JsonIgnore
     private List<Deck> decks;
 
+    @Column(unique = true)
+    private String googleId;
 
+    @Column(unique = true)
+    private String email;
 }

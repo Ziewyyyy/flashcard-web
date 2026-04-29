@@ -4,17 +4,18 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { StudyProvider } from "./context/StudyContext";
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <StudyProvider>
-      <App />
-    </StudyProvider>
+    <GoogleOAuthProvider clientId="591018459960-sbvbs143it9eoi2hl1k9ca0ms8gsvfln.apps.googleusercontent.com">
+      <StudyProvider>
+        <App />
+      </StudyProvider>
+    </GoogleOAuthProvider>
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
