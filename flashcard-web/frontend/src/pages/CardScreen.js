@@ -12,13 +12,21 @@ import { useNavigate } from "react-router-dom";
 function CardScreen() {
   const { deckId } = useParams();
   const [cards, setCards] = useState([]);
+  const [filteredCards, setFilteredCards] = useState([]);
   const [deckName, setDeckName] = useState("");
   const [showModalCard, setShowModalCard] = useState(false);
   const [front, setFront] = useState("");
   const [back, setBack] = useState("");
   const [selectedCard, setSelectedCard] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [toast, setToast] = useState("");
+  const [hasSearched, setHasSearched] = useState(false);
 
+  const rowRefs = useRef({});
+  const toastTimer = useRef(null);
   const navigate = useNavigate();
+
+
   useEffect(() => {
     if (deckId) {
       loadCards();
@@ -29,7 +37,6 @@ function CardScreen() {
   const loadDeckName = async () => {
     try {
       const res = await getDeckById(deckId);
-      console.log("GET deck:", res.data);
       setDeckName(res.data.name);
     } catch (err) {
       console.error("Failed to load deck name", err);
@@ -39,12 +46,26 @@ function CardScreen() {
   const loadCards = async () => {
     try {
       const res = await getCards(deckId);
-      console.log("GET cards:", res.data);
-      setCards(res.data);
+      const newCards = res.data;
+      setCards(newCards);
+
+      const term = searchTerm.trim().toLowerCase();
+      if (!term) {
+        setFilteredCards(newCards);
+      } else {
+        setFilteredCards(
+          newCards.filter(
+            (card) =>
+              card.front.toLowerCase().includes(term) ||
+              card.back.toLowerCase().includes(term)
+          )
+        );
+      }
     } catch (err) {
       console.error("Failed to load cards", err);
     }
   };
+
 
   const handleEditCard = async () => {
     try {
@@ -73,54 +94,107 @@ function CardScreen() {
       console.error("Failed to reset cards", err);
     }
   };
+
+  const handleSearch = () => {
+    const term = searchTerm.trim().toLowerCase();
+    setHasSearched(true);
+    if (!term) {
+      setFilteredCards(cards);
+      return;
+    }
+    const results = cards.filter(
+      (card) =>
+        card.front.toLowerCase().includes(term) ||
+        card.back.toLowerCase().includes(term)
+    );
+    setFilteredCards(results);
+  };
+
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setFilteredCards(cards);
+      setHasSearched(false);
+    }
+  }, [searchTerm, cards]);
+
   return (
     <>
       <div className="app">
         <div className="card-header">
-          <button
-            className="back-btn"
-            onClick={() => navigate(-1)}
-          >
-            ←
-          </button>
-
+          <button className="back-btn" onClick={() => navigate(-1)}>←</button>
           <h1 className="deck-title">{deckName}</h1>
         </div>
+
         <div className="flex justify-center mt-6 px-4">
           <div className="w-full max-w-4xl bg-white rounded-xl shadow-lg p-6">
+            <div className="flex justify-end mb-4">
+              <input
+                type="text"
+                placeholder="Search card..."
+                className="border px-3 py-2 rounded-lg text-sm w-64 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSearch();
+                }}
+              />
+              <button
+                onClick={handleSearch}
+                className="bg-blue-500 text-white px-3 py-2 rounded-lg text-sm"
+              >
+                Search
+              </button>
+            </div>
+
+            {hasSearched && (
+              <p>Found {filteredCards.length} cards</p>
+            )}
+
             <table className="w-full">
               <thead>
                 <tr className="border-b-2 border-gray-300">
-                  <th className="px-5 py-4" >Front</th>
+                  <th className="px-5 py-4">Front</th>
                   <th className="px-5 py-4">Back</th>
                   <th className="px-5 py-4 text-center">Learned</th>
                 </tr>
               </thead>
               <tbody>
-                {cards.map((card) => (
-                  <tr key={card.id} className={`border-b border-gray-200 hover:bg-gray-50 cursor-pointer 
-                                ${selectedCard?.id === card.id ? "bg-blue-100" : ""}`} onClick={() => setSelectedCard(card)}>
-                    <td className="px-5 py-4">{card.front}</td>
-                    <td className="px-5 py-4">{card.back}</td>
-                    <td className="px-5 py-4 text-center">
-                      <input
-                        type="checkbox"
-                        checked={card.learned}
-                        onClick={(e) => e.stopPropagation()}
-                        onChange={async (e) => {
-                          try {
-                            await updateCard(card.id, { ...card, learned: e.target.checked });
-                            loadCards();
-                          } catch (err) {
-                            console.error("Failed to update card", err);
-                          }
-                        }}
-                        id={`checkbox-${card.id}`}
-                        className="w-4 h-4 border border-gray-400 rounded-sm"
-                      />
+                {filteredCards.length > 0 ? (
+                  filteredCards.map((card) => (
+                    <tr
+                      key={card.id}
+                      ref={(el) => (rowRefs.current[card.id] = el)}
+                      className={`border-b border-gray-200 hover:bg-gray-50 cursor-pointer 
+                        ${selectedCard?.id === card.id ? "bg-blue-100" : ""}`}
+                      onClick={() => setSelectedCard(card)}
+                    >
+                      <td className="px-5 py-4">{card.front}</td>
+                      <td className="px-5 py-4">{card.back}</td>
+                      <td className="px-5 py-4 text-center">
+                        <input
+                          type="checkbox"
+                          checked={card.learned}
+                          onClick={(e) => e.stopPropagation()}
+                          onChange={async (e) => {
+                            try {
+                              await updateCard(card.id, { ...card, learned: e.target.checked });
+                              loadCards();
+                            } catch (err) {
+                              console.error("Failed to update card", err);
+                            }
+                          }}
+                          className="w-4 h-4 border border-gray-400 rounded-sm"
+                        />
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={3} className="text-center py-8 text-gray-400">
+                      No cards found
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
@@ -157,7 +231,6 @@ function CardScreen() {
           >
             Delete Card
           </button>
-
           <button
             className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-full shadow"
             onClick={handleResetAll}
@@ -171,31 +244,29 @@ function CardScreen() {
         <div className="modal-overlay">
           <div className="modal">
             <h3>Edit Card</h3>
-
             <input
               type="text"
               placeholder="Front"
               value={front}
               onChange={(e) => setFront(e.target.value)}
             />
-
             <input
               type="text"
               placeholder="Back"
               value={back}
               onChange={(e) => setBack(e.target.value)}
             />
-
             <div className="modal-actions">
-              <button onClick={() => setShowModalCard(false)}>
-                Cancel
-              </button>
-
-              <button onClick={handleEditCard}>
-                Edit
-              </button>
+              <button onClick={() => setShowModalCard(false)}>Cancel</button>
+              <button onClick={handleEditCard}>Edit</button>
             </div>
           </div>
+        </div>
+      )}
+
+      {toast && (
+        <div className="fixed bottom-5 right-5 bg-red-500 text-white px-4 py-2 rounded shadow">
+          {toast}
         </div>
       )}
     </>
