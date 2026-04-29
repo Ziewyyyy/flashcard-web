@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { login } from "../api/authApi";
+import { login, googleLogin } from "../api/authApi";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { GoogleLogin } from "@react-oauth/google";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -50,6 +51,22 @@ export default function Login() {
       toast.error("Login failed: " + (err.response?.data?.message || err.message));
     }
   };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const res = await googleLogin(credentialResponse.credential);
+      localStorage.setItem("token", res.data.token);
+      toast.success("Google login success!");
+      setTimeout(() => navigate("/"), 1500);
+    } catch (err) {
+      toast.error("Google login failed: " + (err.response?.data?.message || err.message));
+    }
+  };
+
+  const handleGoogleError = () => {
+    toast.error("Google login failed. Please try again.");
+  };
+
 
   return (
     <>
@@ -102,7 +119,19 @@ export default function Login() {
                 </button>
               </div>
 
-            </form>
+          </form>
+          <div className="flex items-center my-4">
+            <div className="flex-1 border-t border-gray-300" />
+            <span className="mx-3 text-gray-500 text-sm">or</span>
+            <div className="flex-1 border-t border-gray-300" />
+          </div>
+
+          <div className="flex justify-center" style={{ minWidth: "300px" }}>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              width="300"
+            />
           </div>
         </div>
       </div>
