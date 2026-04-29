@@ -16,7 +16,7 @@ public class CorsConfig {
         config.setAllowCredentials(true);
 
         config.setAllowedOrigins(List.of(
-                "https://anki-clone-three.vercel.app"
+                "https://anki-clone-v2.vercel.app"
         ));
 
         config.setAllowedHeaders(List.of("*"));
