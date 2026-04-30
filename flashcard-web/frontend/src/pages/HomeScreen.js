@@ -296,7 +296,10 @@ function Home() {
           <button
             className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
             disabled={!selectedDeckId}
-            onClick={() => setShowModalCard(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowModalCard(true);
+            }}
           >
             Add
           </button>
@@ -540,7 +543,7 @@ function Home() {
       )}
 
       {showModalCard && (
-        <div className="modal-overlay">
+        <div className="modal-overlay" onClick={(e) => e.stopPropagation()}>
           <div className="modal">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <h3>Create Card</h3>
