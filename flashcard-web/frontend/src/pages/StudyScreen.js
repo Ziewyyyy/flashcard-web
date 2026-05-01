@@ -136,7 +136,7 @@ function StudyScreen() {
     };
 
     const finishStudy = async () => {
-        await endSession(); 
+        await endSession();
         navigate("/");
     };
 
@@ -275,15 +275,32 @@ function StudyScreen() {
                         />
                     </div>
 
-                    <div
-                        className="card-front"
+                    <div className="card-front"
                         style={{
                             fontSize: `${fontSize}px`,
                             fontFamily,
                             color: fontColor
-                        }}
-                    >
-                        {isReverse ? currentCard.back : currentCard.front}
+                        }}>
+                        {isReverse ? (
+                            currentCard.back
+                        ) : currentCard.media ? (
+
+                            currentCard.mediaType === "image" ? (
+                                <img
+                                    src={currentCard.media}
+                                    alt="card"
+                                    style={{ maxWidth: "100%", maxHeight: "300px" }}
+                                />
+                            ) : (
+                                <video
+                                    src={currentCard.media}
+                                    controls
+                                    className="media"
+                                />
+                            )
+                        ) : (
+                            currentCard.front
+                        )}
                     </div>
 
                     {showBack && (
@@ -295,74 +312,94 @@ function StudyScreen() {
                                 color: fontColor
                             }}
                         >
-                            {isReverse ? currentCard.front : currentCard.back}
+                            {isReverse ? (
+                                currentCard.media ? (
+                                    currentCard.mediaType === "image" ? (
+                                        <img
+                                            src={currentCard.media}
+                                            alt="card"
+                                            className="media"
+                                        />
+                                    ) : (
+                                        <video
+                                            src={currentCard.media}
+                                            controls
+                                            style={{ maxWidth: "100%", maxHeight: "300px" }}
+                                        />
+                                    )
+                                ) : (
+                                    currentCard.front
+                                )
+                            ) : (
+                                currentCard.back
+                            )}
                         </div>
                     )}
-                </div>
 
-                <div className="progress-bar">
-                    <div
-                        className="progress"
-                        style={{ width: `${(progressCount / cards.length) * 100}%` }}
-                    />
-                </div>
+                    <div className="progress-bar">
+                        <div
+                            className="progress"
+                            style={{ width: `${(progressCount / cards.length) * 100}%` }}
+                        />
+                    </div>
 
-                <div className="control-panel">
-                    {!showBack ? (
-                        <button className="btn" onClick={handleShow}>
-                            Show
-                        </button>
-                    ) : (
-                        <div className="flex gap-4 justify-center">
-                            <button className="btn bg-red-500" onClick={handleHard}>
-                                Hard
+                    <div className="control-panel">
+                        {!showBack ? (
+                            <button className="btn" onClick={handleShow}>
+                                Show
                             </button>
-                            <button className="btn bg-green-500" onClick={handleEasy}>
-                                Easy
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {showModalCard && (
-                <div className="modal-overlay">
-                    <div className="modal">
-                        <h3>Create Card</h3>
-                        <input type="text" placeholder="Front" value={front} onChange={(e) => setFront(e.target.value)} />
-                        <input type="text" placeholder="Back" value={back} onChange={(e) => setBack(e.target.value)} />
-
-                        <div className="modal-actions">
-                            <button onClick={() => setShowModalCard(false)}>
-                                Cancel
-                            </button>
-
-                            <button onClick={handleCreateCard}>
-                                Create
-                            </button>
-                        </div>
+                        ) : (
+                            <div className="flex gap-4 justify-center">
+                                <button className="btn bg-red-500" onClick={handleHard}>
+                                    Hard
+                                </button>
+                                <button className="btn bg-green-500" onClick={handleEasy}>
+                                    Easy
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
-            )}
 
-            {showModalStats && (() => {
-                const total = cards.length;
-                const learned = learnedCount;
-                const percent = total ? Math.round((learned / total) * 100) : 0;
-
-                return (
+                {showModalCard && (
                     <div className="modal-overlay">
-                        <div className="modal text-center">
-                            <h2>Study Stats</h2>
-                            <p>Progress: {percent}%</p>
-                            <p>{learned} / {total}</p>
-                            <button onClick={() => setShowModalStats(false)}>
-                                Close
-                            </button>
+                        <div className="modal">
+                            <h3>Create Card</h3>
+                            <input type="text" placeholder="Front" value={front} onChange={(e) => setFront(e.target.value)} />
+                            <input type="text" placeholder="Back" value={back} onChange={(e) => setBack(e.target.value)} />
+
+                            <div className="modal-actions">
+                                <button onClick={() => setShowModalCard(false)}>
+                                    Cancel
+                                </button>
+
+                                <button onClick={handleCreateCard}>
+                                    Create
+                                </button>
+                            </div>
                         </div>
                     </div>
-                );
-            })()}
+                )}
+
+                {showModalStats && (() => {
+                    const total = cards.length;
+                    const learned = learnedCount;
+                    const percent = total ? Math.round((learned / total) * 100) : 0;
+
+                    return (
+                        <div className="modal-overlay">
+                            <div className="modal text-center">
+                                <h2>Study Stats</h2>
+                                <p>Progress: {percent}%</p>
+                                <p>{learned} / {total}</p>
+                                <button onClick={() => setShowModalStats(false)}>
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    );
+                })()}
+            </div>
         </>
     );
 }

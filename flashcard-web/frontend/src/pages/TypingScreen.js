@@ -15,9 +15,6 @@ export default function TypingScreen() {
 
     const inputRef = useRef();
 
-    const card = cards[current];
-    const isLastCard = current === cards.length - 1;
-
     const isReverse = sessionStorage.getItem("reverse");
 
     useEffect(() => {
@@ -41,6 +38,17 @@ export default function TypingScreen() {
         loadCards();
     }, [deckId]);
 
+    const card = cards[current];
+
+    if (!cards.length) return <div>No cards available</div>;
+    if (!card) return <div>Loading...</div>;
+
+    const isImageCard = card.media && card.mediaType === "image";
+    const effectiveReverse = isImageCard ? false : isReverse;
+    const isLastCard = current === cards.length - 1;
+
+
+
     const handleKeyDown = (e) => {
         if (e.key === "Enter" && !e.repeat) {
             e.preventDefault();
@@ -56,15 +64,8 @@ export default function TypingScreen() {
             }
         }
     };
-
-
-
-
-    if (!cards.length) return <div>No cards available</div>;
-    if (!card) return <div>Loading...</div>;
-
     const checkAnswer = () => {
-        const correctAnswer = isReverse ? card.front : card.back;
+        const correctAnswer = effectiveReverse ? card.front : card.back;
 
         if (input.trim().toLowerCase() === correctAnswer.toLowerCase()) {
             setResult("correct");
@@ -72,8 +73,8 @@ export default function TypingScreen() {
             setResult("wrong");
         }
 
-        setProgressCount(prev => prev + 1); 
-    };  
+        setProgressCount(prev => prev + 1);
+    };
 
     const nextCard = () => {
         setInput("");
@@ -88,9 +89,21 @@ export default function TypingScreen() {
             </button>
 
             <div className="card-box">
-                <p className="card-text">
-                    {isReverse ? card.back : card.front}
-                </p>
+                {effectiveReverse ? (
+                    <p className="card-text">
+                        {card.back}
+                    </p>
+                ) : card.media ? (
+                    card.mediaType === "image" ? (
+                        <img src={card.media} alt="card" className="media" />
+                    ) : (
+                        <video src={card.media} controls className="media" />
+                    )
+                ) : (
+                    <p className="card-text">
+                        {card.front}
+                    </p>
+                )}
             </div>
 
             <input
