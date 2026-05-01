@@ -320,8 +320,7 @@ function Home() {
           </button>
           <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-r-full">Sync</button>
         </div>
-
-        {/* Table */}
+        
         <div className="flex justify-center mt-6">
           <div className="w-[800px] bg-white rounded-xl shadow p-4">
             <table className="w-full">
