@@ -19,8 +19,6 @@ function Home() {
   const [showModalStats, setShowModalStats] = useState(false);
   const { decks, setDecks } = useStudy();
   const [deckName, setDeckName] = useState("");
-  const menuRef = useRef();
-  const navigate = useNavigate();
   const [selectedDeckId, setSelectedDeckId] = useState(null);
   const [front, setFront] = useState("");
   const [back, setBack] = useState("");
@@ -29,6 +27,13 @@ function Home() {
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
   const [allCards, setAllCards] = useState([]);
   const [studyStats, setStudyStats] = useState(null);
+  const [mediaFile, setMediaFile] = useState(null);
+  const [mediaPreview, setMediaPreview] = useState(null);
+  const [mediaType, setMediaType] = useState(null);
+
+  const fileInputRef = useRef();
+  const menuRef = useRef();
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -103,16 +108,22 @@ function Home() {
   }
 
   const handleCreateCard = async () => {
-    if (!front.trim() || !back.trim() || !selectedDeckId) return;
+    if (!back.trim() || !selectedDeckId) return;
+    if (!front.trim() && !mediaFile) return;
     try {
-      await createCard({ deck: { id: selectedDeckId }, front, back });
+      await createCard({
+        deck: { id: selectedDeckId },
+        front: mediaFile ? "" : front,
+        back,
+        media: mediaFile || null,
+        mediaType: mediaType || null,
+      });
       closeCardModal();
       await loadDeck();
-      console.log("Created card in deck:", selectedDeckId);
     } catch (err) {
       console.error("Failed to create card", err);
     }
-  }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -212,6 +223,9 @@ function Home() {
     setBack("");
     setDuplicateCards([]);
     setAllCards([]);
+    setMediaFile(null);
+    setMediaPreview(null);
+    setMediaType(null);
   };
 
   const loadStats = async () => {
@@ -229,6 +243,28 @@ function Home() {
     const s = seconds % 60;
 
     return `${h}h ${m}m ${s}s`;
+  };
+
+  const handleMediaChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const preview = URL.createObjectURL(file);
+    setMediaPreview(preview);
+    setMediaType(file.type.startsWith("video") ? "video" : "image");
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setMediaFile(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveMedia = () => {
+    setMediaFile(null);
+    setMediaPreview(null);
+    setMediaType(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const selectedDeck = decks.find(d => d.id === selectedDeckId);
@@ -320,7 +356,7 @@ function Home() {
           </button>
           <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-r-full">Sync</button>
         </div>
-        
+
         <div className="flex justify-center mt-6">
           <div className="w-[800px] bg-white rounded-xl shadow p-4">
             <table className="w-full">
@@ -556,13 +592,15 @@ function Home() {
               )}
             </div>
 
-            <input
-              type="text"
-              placeholder="Front"
-              value={front}
-              style={{ borderColor: duplicateCards.length > 0 ? "red" : undefined }}
-              onChange={(e) => setFront(e.target.value)}
-            />
+            {!mediaFile && (
+              <input
+                type="text"
+                placeholder="Front"
+                value={front}
+                style={{ borderColor: duplicateCards.length > 0 ? "red" : undefined }}
+                onChange={(e) => setFront(e.target.value)}
+              />
+            )}
 
             <input
               type="text"
@@ -571,10 +609,47 @@ function Home() {
               onChange={(e) => setBack(e.target.value)}
             />
 
+            <div className="media-upload-wrapper">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,video/*"
+                hidden
+                onChange={handleMediaChange}
+              />
+
+              {!mediaPreview ? (
+                <button
+                  type="button"
+                  className="media-attach-btn"
+                  onClick={() => fileInputRef.current.click()}
+                >
+                  📎 Attach image / video
+                </button>
+              ) : (
+                <div className="media-preview-wrapper">
+                  {mediaType === "image" ? (
+                    <img
+                      src={mediaPreview}
+                      alt="preview"
+                      className="media-preview-image"
+                    />
+                  ) : (
+                    <video
+                      src={mediaPreview}
+                      controls
+                      className="media-preview-video"
+                    />
+                  )}
+                  <button className="media-remove-btn" onClick={handleRemoveMedia}>
+                    ✕
+                  </button>
+                </div>
+              )}
+            </div>
+
             <div className="modal-actions">
-              <button onClick={closeCardModal}>
-                Cancel
-              </button>
+              <button onClick={closeCardModal}>Cancel</button>
               <button onClick={handleCreateCard}>Create</button>
             </div>
           </div>

@@ -24,26 +24,26 @@ public class CardController {
     @Autowired
     private CardRepository cardRepository;
 
-
     @GetMapping("/deck/{deckId}")
-    public List<Card> getByDeck(@PathVariable Long deckId){
+    public List<Card> getByDeck(@PathVariable Long deckId) {
         return service.getByDeck(deckId);
     }
 
     @PostMapping
-    public Card create(@RequestBody Card c){
+    public Card create(@RequestBody Card c) {
         return service.create(c);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCard(@PathVariable Long id, @RequestBody Card card)
-    {
+    public ResponseEntity<?> updateCard(@PathVariable Long id, @RequestBody Card card) {
         Card existing = cardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Card not found"));
 
         existing.setFront(card.getFront());
         existing.setBack(card.getBack());
         existing.setLearned(card.isLearned());
+        existing.setMedia(card.getMedia());
+        existing.setMediaType(card.getMediaType());
 
         cardRepository.save(existing);
 
@@ -52,8 +52,7 @@ public class CardController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCard(@PathVariable Long id) {
-        if(!cardRepository.existsById(id))
-        {
+        if (!cardRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
         cardRepository.deleteById(id);
@@ -61,8 +60,7 @@ public class CardController {
     }
 
     @GetMapping("/deck/{deckId}/study")
-    public List<Card> getStudyCards(@PathVariable Long deckId)
-    {
+    public List<Card> getStudyCards(@PathVariable Long deckId) {
         return cardRepository.findByDeckIdAndLearnedFalse(deckId);
     }
 

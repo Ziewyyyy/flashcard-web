@@ -21,10 +21,37 @@ function CardScreen() {
   const [searchTerm, setSearchTerm] = useState("");
   const [toast, setToast] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
+  const [editMedia, setEditMedia] = useState(null);
+  const [editMediaPreview, setEditMediaPreview] = useState(null);
+  const [editMediaType, setEditMediaType] = useState(null);
+  const [mediaRemoved, setMediaRemoved] = useState(false);
+  const [isReadingFile, setIsReadingFile] = useState(false);
 
+  const editFileInputRef = useRef();
   const rowRefs = useRef({});
   const toastTimer = useRef(null);
   const navigate = useNavigate();
+  const tableRef = useRef();
+  const actionRef = useRef();
+  const modalRef = useRef();
+
+  const displayMedia = editMediaPreview
+    ? editMediaPreview
+    : (!mediaRemoved ? selectedCard?.media : null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      const inTable = tableRef.current?.contains(e.target);
+      const inActions = actionRef.current?.contains(e.target);
+      const inModal = modalRef.current?.contains(e.target);
+      if (!inTable && !inActions && !inModal) {
+        setSelectedCard(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
 
   useEffect(() => {
@@ -43,21 +70,21 @@ function CardScreen() {
     }
   };
 
-  const loadCards = async () => {
+  const loadCards = async (term = searchTerm) => {
     try {
       const res = await getCards(deckId);
       const newCards = res.data;
       setCards(newCards);
 
-      const term = searchTerm.trim().toLowerCase();
-      if (!term) {
+      const t = term.trim().toLowerCase();
+      if (!t) {
         setFilteredCards(newCards);
       } else {
         setFilteredCards(
           newCards.filter(
             (card) =>
-              card.front.toLowerCase().includes(term) ||
-              card.back.toLowerCase().includes(term)
+              card.front.toLowerCase().includes(t) ||
+              card.back.toLowerCase().includes(t)
           )
         );
       }
@@ -66,17 +93,26 @@ function CardScreen() {
     }
   };
 
-
   const handleEditCard = async () => {
     try {
-      await updateCard(selectedCard.id, { front, back });
-      loadCards();
-      setShowModalCard(false);
+      const res = await updateCard(selectedCard.id, {
+        front: (editMedia || (selectedCard.media && !mediaRemoved)) ? "" : front,
+        back,
+        learned: selectedCard.learned,
+        media: mediaRemoved ? null : (editMedia || selectedCard.media || null),
+        mediaType: mediaRemoved ? null : (editMediaType || selectedCard.mediaType || null),
+      });
+
+      console.log("Response:", res.data);
+
+      handleCloseModal();
       setSelectedCard(null);
+      await loadCards("");
+
     } catch (err) {
       console.error("Failed to edit card", err);
     }
-  }
+  };
 
   const handleDeleteCard = async (id) => {
     try {
@@ -117,6 +153,42 @@ function CardScreen() {
     }
   }, [searchTerm, cards]);
 
+  const handleEditMediaChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const preview = URL.createObjectURL(file);
+    setEditMediaPreview(preview);
+    setEditMediaType(file.type.startsWith("video") ? "video" : "image");
+    setMediaRemoved(false);
+    setIsReadingFile(true);
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setEditMedia(reader.result);
+      setIsReadingFile(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveEditMedia = () => {
+    setEditMedia(null);
+    setEditMediaPreview(null);
+    setEditMediaType(null);
+    setMediaRemoved(true);
+    if (editFileInputRef.current) editFileInputRef.current.value = "";
+  };
+
+  const handleCloseModal = () => {
+    setShowModalCard(false);
+    setEditMedia(null);
+    setEditMediaPreview(null);
+    setEditMediaType(null);
+    setMediaRemoved(false);
+    setIsReadingFile(false);
+    if (editFileInputRef.current) editFileInputRef.current.value = "";
+  };
+
   return (
     <>
       <div className="app">
@@ -125,7 +197,7 @@ function CardScreen() {
           <h1 className="deck-title">{deckName}</h1>
         </div>
 
-        <div className="flex justify-center mt-6 px-4">
+        <div className="flex justify-center mt-6 px-4" ref={tableRef}>
           <div className="w-full max-w-4xl bg-white rounded-xl shadow-lg p-6">
             <div className="flex justify-end mb-4">
               <input
@@ -164,11 +236,28 @@ function CardScreen() {
                     <tr
                       key={card.id}
                       ref={(el) => (rowRefs.current[card.id] = el)}
-                      className={`border-b border-gray-200 hover:bg-gray-50 cursor-pointer 
-                        ${selectedCard?.id === card.id ? "bg-blue-100" : ""}`}
+                      className={`border-b border-gray-200 hover:bg-gray-50 cursor-pointer ${selectedCard?.id === card.id ? "selected-row" : ""
+                        }`}
                       onClick={() => setSelectedCard(card)}
                     >
-                      <td className="px-5 py-4">{card.front}</td>
+                      <td className="px-5 py-4">
+                        {card.media ? (
+                          card.mediaType === "image" ? (
+                            <img
+                              src={card.media}
+                              alt={card.front}
+                              style={{ maxHeight: "60px", maxWidth: "100px", borderRadius: "6px", objectFit: "cover" }}
+                            />
+                          ) : (
+                            <video
+                              src={card.media}
+                              style={{ maxHeight: "60px", maxWidth: "100px", borderRadius: "6px" }}
+                            />
+                          )
+                        ) : (
+                          card.front
+                        )}
+                      </td>
                       <td className="px-5 py-4">{card.back}</td>
                       <td className="px-5 py-4 text-center">
                         <input
@@ -200,7 +289,7 @@ function CardScreen() {
           </div>
         </div>
 
-        <div className="flex gap-4 justify-center mt-6">
+        <div className="flex gap-4 justify-center mt-6" ref={actionRef}>
           <button
             className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-full shadow"
             onClick={() => {
@@ -210,6 +299,7 @@ function CardScreen() {
               }
               setFront(selectedCard.front);
               setBack(selectedCard.back);
+              setMediaRemoved(false);
               setShowModalCard(true);
             }}
           >
@@ -242,23 +332,71 @@ function CardScreen() {
 
       {showModalCard && (
         <div className="modal-overlay">
-          <div className="modal">
+          <div className="modal" ref={modalRef}>
             <h3>Edit Card</h3>
-            <input
-              type="text"
-              placeholder="Front"
-              value={front}
-              onChange={(e) => setFront(e.target.value)}
-            />
+
+            {(editMedia || (selectedCard?.media && !mediaRemoved)) ? (
+              <div style={{ marginTop: "10px", marginBottom: "10px" }}>
+                {(editMediaType || selectedCard?.mediaType) === "image" ? (
+                  <img
+                    src={displayMedia}
+                    alt="media"
+                    style={{ maxWidth: "100%", maxHeight: "160px", borderRadius: "8px" }}
+                  />
+                ) : (
+                  <video
+                    src={displayMedia}
+                    controls
+                    style={{ maxWidth: "100%", maxHeight: "160px", borderRadius: "8px" }}
+                  />
+                )}
+
+                <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
+                  <input
+                    ref={editFileInputRef}
+                    type="file"
+                    accept="image/*,video/*"
+                    hidden
+                    onChange={handleEditMediaChange}
+                  />
+                  <button
+                    type="button"
+                    className="media-attach-btn"
+                    onClick={() => editFileInputRef.current.click()}
+                  >
+                    🔄 Change file
+                  </button>
+                  <button
+                    type="button"
+                    className="media-remove-btn"
+                    style={{ position: "static", width: "auto", height: "auto", borderRadius: "6px", padding: "6px 10px" }}
+                    onClick={handleRemoveEditMedia}
+                  >
+                    ✕ Remove
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <input
+                type="text"
+                placeholder="Front"
+                value={front}
+                onChange={(e) => setFront(e.target.value)}
+              />
+            )}
+
             <input
               type="text"
               placeholder="Back"
               value={back}
               onChange={(e) => setBack(e.target.value)}
             />
+
             <div className="modal-actions">
-              <button onClick={() => setShowModalCard(false)}>Cancel</button>
-              <button onClick={handleEditCard}>Edit</button>
+              <button onClick={handleCloseModal}>Cancel</button>
+              <button onClick={handleEditCard} disabled={isReadingFile}>
+                {isReadingFile ? "Loading..." : "Edit"}
+              </button>
             </div>
           </div>
         </div>
