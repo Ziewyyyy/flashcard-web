@@ -24,7 +24,6 @@ function CardScreen() {
   const [editMedia, setEditMedia] = useState(null);
   const [editMediaPreview, setEditMediaPreview] = useState(null);
   const [editMediaType, setEditMediaType] = useState(null);
-  const [mediaRemoved, setMediaRemoved] = useState(false);
   const [isReadingFile, setIsReadingFile] = useState(false);
 
   const editFileInputRef = useRef();
@@ -35,9 +34,7 @@ function CardScreen() {
   const actionRef = useRef();
   const modalRef = useRef();
 
-  const displayMedia = editMediaPreview
-    ? editMediaPreview
-    : (!mediaRemoved ? selectedCard?.media : null);
+  const displayMedia = editMediaPreview || selectedCard?.media;
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -96,11 +93,11 @@ function CardScreen() {
   const handleEditCard = async () => {
     try {
       const res = await updateCard(selectedCard.id, {
-        front: (editMedia || (selectedCard.media && !mediaRemoved)) ? "" : front,
+        front: (editMedia || selectedCard?.media) ? "" : front,
         back,
         learned: selectedCard.learned,
-        media: mediaRemoved ? null : (editMedia || selectedCard.media || null),
-        mediaType: mediaRemoved ? null : (editMediaType || selectedCard.mediaType || null),
+        media: editMedia || selectedCard.media || null,
+        mediaType: editMediaType || selectedCard.mediaType || null,
       });
 
       console.log("Response:", res.data);
@@ -160,7 +157,6 @@ function CardScreen() {
     const preview = URL.createObjectURL(file);
     setEditMediaPreview(preview);
     setEditMediaType(file.type.startsWith("video") ? "video" : "image");
-    setMediaRemoved(false);
     setIsReadingFile(true);
 
     const reader = new FileReader();
@@ -171,20 +167,11 @@ function CardScreen() {
     reader.readAsDataURL(file);
   };
 
-  const handleRemoveEditMedia = () => {
-    setEditMedia(null);
-    setEditMediaPreview(null);
-    setEditMediaType(null);
-    setMediaRemoved(true);
-    if (editFileInputRef.current) editFileInputRef.current.value = "";
-  };
-
   const handleCloseModal = () => {
     setShowModalCard(false);
     setEditMedia(null);
     setEditMediaPreview(null);
     setEditMediaType(null);
-    setMediaRemoved(false);
     setIsReadingFile(false);
     if (editFileInputRef.current) editFileInputRef.current.value = "";
   };
@@ -299,7 +286,6 @@ function CardScreen() {
               }
               setFront(selectedCard.front);
               setBack(selectedCard.back);
-              setMediaRemoved(false);
               setShowModalCard(true);
             }}
           >
@@ -335,7 +321,7 @@ function CardScreen() {
           <div className="modal" ref={modalRef}>
             <h3>Edit Card</h3>
 
-            {(editMedia || (selectedCard?.media && !mediaRemoved)) ? (
+            {(editMedia || selectedCard?.media) ? (
               <div style={{ marginTop: "10px", marginBottom: "10px" }}>
                 {(editMediaType || selectedCard?.mediaType) === "image" ? (
                   <img
@@ -365,14 +351,6 @@ function CardScreen() {
                     onClick={() => editFileInputRef.current.click()}
                   >
                     🔄 Change file
-                  </button>
-                  <button
-                    type="button"
-                    className="media-remove-btn"
-                    style={{ position: "static", width: "auto", height: "auto", borderRadius: "6px", padding: "6px 10px" }}
-                    onClick={handleRemoveEditMedia}
-                  >
-                    ✕ Remove
                   </button>
                 </div>
               </div>
