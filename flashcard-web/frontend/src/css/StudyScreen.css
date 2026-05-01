@@ -40,7 +40,13 @@
   font-weight: 500;
   text-align: center;
   color: #222;
-  animation: fadeIn 0.3s ease;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
 }
 
 .card-back {
@@ -48,7 +54,7 @@
   text-align: center;
   color: #666;
   padding-top: 30px;
-  border-top: 1px solid rgba(0,0,0,0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
   margin-top: 30px;
   width: 100%;
   animation: fadeIn 0.4s ease;
@@ -59,6 +65,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -130,7 +137,7 @@
   left: 12px;
   display: flex;
   gap: 8px;
-  background: rgba(255,255,255,0.6);
+  background: rgba(255, 255, 255, 0.6);
   padding: 6px 10px;
   border-radius: 10px;
   backdrop-filter: blur(8px);
@@ -185,4 +192,12 @@
   background: #4cafef;
   border-radius: 10px;
   transition: width 0.3s ease;
+}
+
+.media {
+  max-width: 100%;
+  max-height: 250px;
+  border-radius: 8px;
+  display: block;
+  margin: 0 auto;
 }

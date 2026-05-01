@@ -27,6 +27,12 @@ public class Card {
     @Column(nullable = false)
     private boolean learned = false;
 
+    @Column(columnDefinition = "LONGTEXT")
+    private String media;
+
+    @Column
+    private String mediaType;
+
     public boolean isLearned() {
         return learned;
     }
