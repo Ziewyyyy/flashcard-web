@@ -10,9 +10,12 @@ import { useStudy } from "../context/StudyContext";
 import { exportDecks } from "../api/deckApi";
 import { importDecks } from "../api/deckApi";
 import { toast } from "react-toastify";
+import { translations } from "../i18n";
+import { useLanguage } from "../context/LanguageContext";
 
 function Home() {
-  const [showMenu, setShowMenu] = useState(false);
+  const [showFileMenu, setShowFileMenu] = useState(false);
+  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [showModalDeck, setShowModalDeck] = useState(false);
   const [showModalCard, setShowModalCard] = useState(false);
   const [showModalStudy, setShowModalStudy] = useState(false);
@@ -31,16 +34,19 @@ function Home() {
   const [mediaPreview, setMediaPreview] = useState(null);
   const [mediaType, setMediaType] = useState(null);
 
+  const { lang, changeLanguage } = useLanguage();
   const fileInputRef = useRef();
-  const menuRef = useRef();
   const navigate = useNavigate();
-
+  const t = translations[lang];
+  const fileMenuRef = useRef();
+  const settingsMenuRef = useRef();
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setShowMenu(false);
-      }
+      if (fileMenuRef.current && !fileMenuRef.current.contains(e.target))
+        setShowFileMenu(false);
+      if (settingsMenuRef.current && !settingsMenuRef.current.contains(e.target))
+        setShowSettingsMenu(false);
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -289,14 +295,13 @@ function Home() {
       <div className="app" onClick={() => setSelectedDeckId(null)}>
         <div className="topbar flex justify-between items-center px-4">
           <div className="menu-left flex gap-4 items-center">
-            <div className="file-menu" ref={menuRef}>
-              <span onClick={() => setShowMenu(!showMenu)}>File</span>
-
-              {showMenu && (
+            <div className="file-menu" ref={fileMenuRef}>
+              <span onClick={() => setShowFileMenu(!showFileMenu)}>{t.file}</span>
+              {showFileMenu && (
                 <div className="dropdown">
                   <div className="item">
                     <label className="import-btn">
-                      Import
+                      {t.import}
                       <input
                         type="file"
                         accept=".json"
@@ -309,26 +314,41 @@ function Home() {
                     className="item"
                     onClick={handleExport}
                   >
-                    Export
+                    {t.export}
                   </div>
                 </div>
               )}
             </div>
 
-            <span>Settings</span>
+            <div className="file-menu" ref={settingsMenuRef}>
+              <span onClick={() => setShowSettingsMenu(!showSettingsMenu)}>
+                {t.settings}
+              </span>
+
+              {showSettingsMenu && (
+                <div className="dropdown">
+                  <div className="item" onClick={() => changeLanguage("vi")}>
+                    🇻🇳 Tiếng Việt
+                  </div>
+                  <div className="item" onClick={() => changeLanguage("en")}>
+                    🇺🇸 English
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           <button
             onClick={handleLogout}
             className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
           >
-            Logout
+            {t.logout}
           </button>
 
         </div>
 
         <div className="inline-flex mt-4 justify-center">
-          <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-l-full">Decks</button>
+          <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-l-full">{t.decks}</button>
           <button
             className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
             disabled={!selectedDeckId}
@@ -337,13 +357,13 @@ function Home() {
               setShowModalCard(true);
             }}
           >
-            Add
+            {t.add}
           </button>
           <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
             disabled={!selectedDeckId}
             onClick={() => navigate(`/cards/${selectedDeckId}`)}
           >
-            Browse
+            {t.browse}
           </button>
           <button
             className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
@@ -352,9 +372,9 @@ function Home() {
               setShowModalStats(true);
             }}
           >
-            Stats
+            {t.stats}
           </button>
-          <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-r-full">Sync</button>
+          <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-r-full">{t.sync}</button>
         </div>
 
         <div className="flex justify-center mt-6">
@@ -362,10 +382,10 @@ function Home() {
             <table className="w-full">
               <thead>
                 <tr>
-                  <th className="px-4 py-2">Deck</th>
-                  <th className="px-4 py-2">Total</th>
-                  <th className="px-4 py-2">Remaining</th>
-                  <th className="px-4 py-2">Learn</th>
+                  <th className="px-4 py-2">{t.deck}</th>
+                  <th className="px-4 py-2">{t.total}</th>
+                  <th className="px-4 py-2">{t.remaining}</th>
+                  <th className="px-4 py-2">{t.learned}</th>
                 </tr>
               </thead>
               <tbody>
@@ -412,18 +432,17 @@ function Home() {
           </div>
         </div>
 
-        {/* Bottom buttons */}
         <div className="flex gap-4 justify-center mt-6">
           <button
             className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-full shadow"
             onClick={() => setShowModalDeck(true)}
           >
-            Create Deck
+            {t.createDeck}
           </button>
           <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-full shadow"
             onClick={() => deleteDeckById(selectedDeckId)}
           >
-            Delete Deck
+            {t.deleteDeck}
           </button>
         </div>
       </div>
@@ -434,12 +453,12 @@ function Home() {
           <div className="modal study-modal">
             <div className="study-left">
               <h2>{selectedDeck.name}
-                <p>Cards: {selectedDeck.cardCount}</p>
+                <p>{t.cards}: {selectedDeck.cardCount}</p>
                 <button className="shuffle-btn" onClick={handleShuffleDeck}>
-                  Shuffle
+                  {t.shuffle}
                 </button>
                 <button className="shuffle-btn" onClick={handleReverse}>
-                  Reverse
+                  {t.reverse}
                 </button>
               </h2>
             </div>
@@ -453,7 +472,7 @@ function Home() {
                   navigate(`/study/${selectedDeck.id}`);
                 }}
               >
-                Study
+                {t.study}
               </button>
               <button
                 className="typing-btn"
@@ -463,7 +482,7 @@ function Home() {
                   navigate(`/typing/${selectedDeck.id}`);
                 }}
               >
-                Typing
+                {t.typing}
               </button>
               <button
                 onClick={() => {
@@ -472,7 +491,7 @@ function Home() {
                   sessionStorage.removeItem("reverse");
                 }}
               >
-                Close
+                {t.close}
               </button>
             </div>
           </div>
@@ -507,7 +526,7 @@ function Home() {
             <div className="modal stats-modal text-center">
 
               <h2 className="text-xl font-bold mb-4">
-                {isGlobal ? "All Decks Stats" : `${selectedDeck.name} - Stats`}
+                {isGlobal ? t.allDeckStats : `${selectedDeck.name} - ${t.stats}`}
               </h2>
 
               <div className="flex justify-center">
@@ -521,19 +540,19 @@ function Home() {
               </div>
 
               <div className="mt-4">
-                <p>Progress: <b>{percent}%</b></p>
-                <p>Learned: {learned} / {total}</p>
-                <p>Remaining: {notLearned}</p>
+                <p>{t.progress}: <b>{percent}%</b></p>
+                <p>{t.learned}: {learned} / {total}</p>
+                <p>{t.remaining}: {notLearned}</p>
 
                 <hr className="my-2" />
 
                 {selectedDeck ? (
-                  <p>Study time: <b>{formatTime(deckTime)}</b></p>
+                  <p>{t.studyTime}: <b>{formatTime(deckTime)}</b></p>
                 ) : (
                   <>
-                    <p>Total study time: <b>{formatTime(totalTime)}</b></p>
-                    <p>🔥 Streak: <b>{studyStats?.streak || 0} days</b></p>
-                    <p>🏆 Longest streak: <b>{studyStats?.longestStreak || 0} days</b></p>
+                    <p>{t.totalStudyTime}: <b>{formatTime(totalTime)}</b></p>
+                    <p>🔥 {t.streak}: <b>{studyStats?.streak || 0} days</b></p>
+                    <p>🏆 {t.longestStreak}: <b>{studyStats?.longestStreak || 0} days</b></p>
                   </>
                 )}
               </div>
@@ -542,7 +561,7 @@ function Home() {
                 className="mt-4 px-4 py-2 bg-gray-300 rounded"
                 onClick={() => setShowModalStats(false)}
               >
-                Close
+                {t.close}
               </button>
 
             </div>
@@ -553,16 +572,16 @@ function Home() {
       {showModalDeck && (
         <div className="modal-overlay">
           <div className="modal">
-            <h3>Create Deck</h3>
+            <h3>{t.createDeck}</h3>
             <input
               type="text"
-              placeholder="Deck name"
+              placeholder={t.deck}
               value={deckName}
               onChange={(e) => setDeckName(e.target.value)}
             />
             <div className="modal-actions">
               <button onClick={() => setShowModalDeck(false)}>
-                Cancel
+                {t.cancel}
               </button>
 
               <button
@@ -570,7 +589,7 @@ function Home() {
                   handleCreateDeck();
                 }}
               >
-                Create
+                {t.create}
               </button>
             </div>
           </div>
@@ -581,13 +600,13 @@ function Home() {
         <div className="modal-overlay" onClick={(e) => e.stopPropagation()}>
           <div className="modal">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <h3>Create Card</h3>
+              <h3>{t.createCard}</h3>
               {duplicateCards.length > 0 && (
                 <span
                   style={{ color: "#fe0000ff", cursor: "pointer", fontSize: "13px", textDecoration: "underline" }}
                   onClick={() => setShowDuplicateModal(true)}
                 >
-                  Show Duplicates ({duplicateCards.length})
+                  {t.showDuplicate} ({duplicateCards.length})
                 </span>
               )}
             </div>
@@ -595,7 +614,7 @@ function Home() {
             {!mediaFile && (
               <input
                 type="text"
-                placeholder="Front"
+                placeholder={t.front}
                 value={front}
                 style={{ borderColor: duplicateCards.length > 0 ? "red" : undefined }}
                 onChange={(e) => setFront(e.target.value)}
@@ -604,7 +623,7 @@ function Home() {
 
             <input
               type="text"
-              placeholder="Back"
+              placeholder={t.back}
               value={back}
               onChange={(e) => setBack(e.target.value)}
             />
@@ -624,7 +643,7 @@ function Home() {
                   className="media-attach-btn"
                   onClick={() => fileInputRef.current.click()}
                 >
-                  📎 Attach image / video
+                  {t.attach}
                 </button>
               ) : (
                 <div className="media-preview-wrapper">
@@ -649,8 +668,8 @@ function Home() {
             </div>
 
             <div className="modal-actions">
-              <button onClick={closeCardModal}>Cancel</button>
-              <button onClick={handleCreateCard}>Create</button>
+              <button onClick={closeCardModal}>{t.cancel}</button>
+              <button onClick={handleCreateCard}>{t.create}</button>
             </div>
           </div>
         </div>
@@ -659,7 +678,7 @@ function Home() {
       {showDuplicateModal && (
         <div className="modal-overlay" style={{ zIndex: 1100 }}>
           <div className="modal">
-            <h3>Duplicate Cards</h3>
+            <h3>{t.duplicate}</h3>
             {duplicateCards.map((card) => (
               <div key={card.id} style={{
                 border: "1px solid #e5e7eb",
@@ -667,12 +686,12 @@ function Home() {
                 padding: "12px",
                 marginBottom: "8px"
               }}>
-                <div><b>Front:</b> {card.front}</div>
-                <div><b>Back:</b> {card.back}</div>
+                <div><b>{t.front}:</b> {card.front}</div>
+                <div><b>{t.back}:</b> {card.back}</div>
               </div>
             ))}
             <div className="modal-actions">
-              <button onClick={() => setShowDuplicateModal(false)}>Close</button>
+              <button onClick={() => setShowDuplicateModal(false)}>{t.close}</button>
             </div>
           </div>
         </div>

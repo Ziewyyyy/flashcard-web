@@ -26,9 +26,10 @@
 }
 
 /* Table */
-table {
+.card-screen table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 /* Header */
@@ -37,21 +38,21 @@ thead {
   color: white;
 }
 
-th {
+.card-screen th {
   padding: 14px;
   text-align: left;
   font-weight: 500;
 }
 
-/* Body */
-td {
+.card-screen td {
   padding: 14px;
   border-bottom: 1px solid #eee;
   color: #333;
+  text-align: left;
 }
 
 /* Hover row */
-tbody tr:hover {
+.card-screen tbody tr:hover {
   background: #f1f5ff;
   transition: 0.2s;
 }
@@ -139,4 +140,20 @@ td:last-child {
   align-items: center;
 
   z-index: 9999;
+}
+
+.card-screen th:nth-child(1),
+.card-screen td:nth-child(1) {
+  width: 30%;
+}
+
+.card-screen th:nth-child(2),
+.card-screen td:nth-child(2) {
+  width: 40%;
+}
+
+.card-screen th:nth-child(3),
+.card-screen td:nth-child(3) {
+  width: 30%;
+  text-align: center;
 }

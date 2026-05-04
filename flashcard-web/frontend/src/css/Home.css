@@ -134,7 +134,10 @@
 
   th:nth-child(2),
   th:nth-child(3),
+  th:nth-child(4),
   td:nth-child(4) {
+    white-space: nowrap;
+    width: 100px;
     text-align: center;
   }
 
@@ -255,4 +258,69 @@
 
   .typing-btn:hover {
     opacity: 0.9;
+  }
+
+  .media-upload-wrapper {
+    margin-top: 10px;
+  }
+
+  .media-attach-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px dashed #aaa;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
+    color: #555;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .media-attach-btn:hover {
+    border-color: #555;
+    color: #333;
+  }
+
+  .media-preview-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-top: 6px;
+  }
+
+  .media-preview-image {
+    max-width: 100%;
+    max-height: 160px;
+    border-radius: 8px;
+    display: block;
+  }
+
+  .media-preview-video {
+    max-width: 100%;
+    max-height: 160px;
+    border-radius: 8px;
+    display: block;
+  }
+
+  .media-remove-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 22px;
+    text-align: center;
+    padding: 0;
+    transition: background 0.2s;
+  }
+
+  .media-remove-btn:hover {
+    background: rgba(0, 0, 0, 0.8);
   }

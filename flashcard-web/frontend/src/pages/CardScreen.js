@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import "../css/Home.css";
 import "../css/CreateDeck.css";
 import "../css/Card.css";
 import { getCards, updateCard, deleteCard } from "../api/cardApi";
 import { getDeckById } from "../api/deckApi";
 import { resetAllCards } from "../api/cardApi";
 import { useNavigate } from "react-router-dom";
+import { translations } from "../i18n";
+import { useLanguage } from "../context/LanguageContext";
 
 
 function CardScreen() {
@@ -33,6 +34,8 @@ function CardScreen() {
   const tableRef = useRef();
   const actionRef = useRef();
   const modalRef = useRef();
+  const { lang } = useLanguage();
+  const t = translations[lang];
 
   const displayMedia = editMediaPreview || selectedCard?.media;
 
@@ -178,7 +181,7 @@ function CardScreen() {
 
   return (
     <>
-      <div className="app">
+      <div className="app card-screen">
         <div className="card-header">
           <button className="back-btn" onClick={() => navigate(-1)}>←</button>
           <h1 className="deck-title">{deckName}</h1>
@@ -189,7 +192,7 @@ function CardScreen() {
             <div className="flex justify-end mb-4">
               <input
                 type="text"
-                placeholder="Search card..."
+                placeholder={t.search + "..."}
                 className="border px-3 py-2 rounded-lg text-sm w-64 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -201,20 +204,25 @@ function CardScreen() {
                 onClick={handleSearch}
                 className="bg-blue-500 text-white px-3 py-2 rounded-lg text-sm"
               >
-                Search
+                {t.search}
               </button>
             </div>
 
             {hasSearched && (
-              <p>Found {filteredCards.length} cards</p>
+              <p>
+                {filteredCards.length === 1
+                  ? t.foundOne
+                  : t.foundMany.replace("{count}", filteredCards.length)
+                }
+              </p>
             )}
 
             <table className="w-full">
               <thead>
                 <tr className="border-b-2 border-gray-300">
-                  <th className="px-5 py-4">Front</th>
-                  <th className="px-5 py-4">Back</th>
-                  <th className="px-5 py-4 text-center">Learned</th>
+                  <th className="px-5 py-4">{t.front}</th>
+                  <th className="px-5 py-4">{t.back}</th>
+                  <th className="px-5 py-4 text-center">{t.learned}</th>
                 </tr>
               </thead>
               <tbody>
@@ -267,7 +275,7 @@ function CardScreen() {
                 ) : (
                   <tr>
                     <td colSpan={3} className="text-center py-8 text-gray-400">
-                      No cards found
+                      {t.noCards}
                     </td>
                   </tr>
                 )}
@@ -281,7 +289,7 @@ function CardScreen() {
             className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-full shadow"
             onClick={() => {
               if (!selectedCard) {
-                alert("Please select a card to edit");
+                alert(t.selectEdit);
                 return;
               }
               setFront(selectedCard.front);
@@ -289,29 +297,29 @@ function CardScreen() {
               setShowModalCard(true);
             }}
           >
-            Edit Card
+            {t.editCard}
           </button>
           <button
             className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-full shadow"
             onClick={async () => {
               if (!selectedCard) {
-                alert("Please select a card to delete");
+                alert(t.selectDelete);
                 return;
               }
-              if (window.confirm("Are you sure?")) {
+              if (window.confirm(t.confirmDelete)) {
                 await handleDeleteCard(selectedCard.id);
                 loadCards();
                 setSelectedCard(null);
               }
             }}
           >
-            Delete Card
+            {t.deleteCard}
           </button>
           <button
             className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-full shadow"
             onClick={handleResetAll}
           >
-            Reset All
+            {t.resetAll}
           </button>
         </div>
       </div>
@@ -319,7 +327,7 @@ function CardScreen() {
       {showModalCard && (
         <div className="modal-overlay">
           <div className="modal" ref={modalRef}>
-            <h3>Edit Card</h3>
+            <h3>{t.editCard}</h3>
 
             {(editMedia || selectedCard?.media) ? (
               <div style={{ marginTop: "10px", marginBottom: "10px" }}>
@@ -357,7 +365,7 @@ function CardScreen() {
             ) : (
               <input
                 type="text"
-                placeholder="Front"
+                placeholder={t.front}
                 value={front}
                 onChange={(e) => setFront(e.target.value)}
               />
@@ -365,15 +373,15 @@ function CardScreen() {
 
             <input
               type="text"
-              placeholder="Back"
+              placeholder={t.back}
               value={back}
               onChange={(e) => setBack(e.target.value)}
             />
 
             <div className="modal-actions">
-              <button onClick={handleCloseModal}>Cancel</button>
+              <button onClick={handleCloseModal}>{t.cancel}</button>
               <button onClick={handleEditCard} disabled={isReadingFile}>
-                {isReadingFile ? "Loading..." : "Edit"}
+                {isReadingFile ? "Loading..." : t.editCard}
               </button>
             </div>
           </div>
