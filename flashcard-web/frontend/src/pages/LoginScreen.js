@@ -4,11 +4,16 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { GoogleLogin } from "@react-oauth/google";
+import { translations } from "../i18n";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { lang } = useLanguage();
+  const t = translations[lang];
+
 
   useEffect(() => {
 
@@ -41,12 +46,12 @@ export default function Login() {
     try {
       const res = await login({ username, password });
       localStorage.setItem("token", res.data.token);
-      toast.success("Login success!");
+      toast.success(t.loginSuccess || "Login success!");
       setTimeout(() => navigate("/"), 1500);
       navigate("/");
     } catch (err) {
       console.error("Login failed", err);
-      toast.error("Login failed: " + (err.response?.data?.message || err.message));
+      toast.error(t.loginFailed || "Login failed: " + (err.response?.data?.message || err.message));
     }
   };
 
@@ -54,15 +59,15 @@ export default function Login() {
     try {
       const res = await googleLogin(credentialResponse.credential);
       localStorage.setItem("token", res.data.token);
-      toast.success("Google login success!");
+      toast.success(t.googleLoginSuccess);
       setTimeout(() => navigate("/"), 1500);
     } catch (err) {
-      toast.error("Google login failed: " + (err.response?.data?.message || err.message));
+      toast.error(t.googleLoginFailed || "Google login failed: " + (err.response?.data?.message || err.message));
     }
   };
 
   const handleGoogleError = () => {
-    toast.error("Google login failed. Please try again.");
+    toast.error(t.googleLoginFailed || "Google login failed. Please try again.");
   };
 
 
@@ -70,7 +75,7 @@ export default function Login() {
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 text-center text-2xl font-bold tracking-tight text-gray-800">
-          Sign in to your account
+          {t.loginTitle}
         </h2>
       </div>
 
@@ -81,7 +86,7 @@ export default function Login() {
             <div>
               <input
                 type="text"
-                placeholder="Username"
+                placeholder={t.username}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="block w-full rounded-md border-2 border-gray-700 px-3 py-2 text-black font-medium"
@@ -91,7 +96,7 @@ export default function Login() {
             <div>
               <input
                 type="password"
-                placeholder="Password"
+                placeholder={t.password}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="block w-full rounded-md border-2 border-gray-700 px-3 py-2 text-black font-medium"
@@ -103,7 +108,7 @@ export default function Login() {
                 type="submit"
                 className="flex-1 rounded-md bg-indigo-500 px-3 py-2 text-white hover:bg-indigo-400"
               >
-                Login
+                {t.login}
               </button>
 
               <button
@@ -111,14 +116,14 @@ export default function Login() {
                 onClick={() => navigate("/register")}
                 className="flex-1 rounded-md bg-indigo-500 px-3 py-2 text-white hover:bg-indigo-400"
               >
-                Register
+                {t.register}
               </button>
             </div>
 
           </form>
           <div className="flex items-center my-4">
             <div className="flex-1 border-t border-gray-300" />
-            <span className="mx-3 text-gray-500 text-sm">or</span>
+            <span className="mx-3 text-gray-500 text-sm">{t.or}</span>
             <div className="flex-1 border-t border-gray-300" />
           </div>
 

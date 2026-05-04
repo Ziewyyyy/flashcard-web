@@ -64,12 +64,40 @@ export const translations = {
         finish: "Finish",
         return: "Return",
         studyStats: "Study Stats",
-        loading: "Loading..."
+        loading: "Loading...",
+
+        //typing screen
+        typingPlaceholder: "Type your answer...",
+        check: "Check",
+        next: "Next",
+        redo: "Redo",
+        correct: "Correct!",
+        wrong: "Wrong!",
+
+        //LoginScreen
+        loginTitle: "Sign in to your account",
+        username: "Username",
+        password: "Password",
+        login: "Login",
+        register: "Register",
+        or: "or",
+        loginSuccess: "Login successful!",
+        loginFailed: "Login failed",
+        googleLoginSuccess: "Google login successful!",
+        googleLoginFailed: "Google login failed",
+
+        //RegisterScreen
+        registerTitle: "Register a new account",
+        confirmPassword: "Confirm Password",
+        registerSuccess: "Register successful!",
+        registerFailed: "Register failed",
+        passwordNotMatch: "Confirm password does not match",
+
     },
     vi: {
         file: "Tệp",
-        import: "Nhập",
-        export: "Xuất",
+        import: "Nhập file",
+        export: "Xuất file",
         settings: "Cài đặt",
         logout: "Đăng xuất",
 
@@ -131,6 +159,33 @@ export const translations = {
         finish: "Hoàn thành",
         return: "Quay lại",
         studyStats: "Thống kê học",
-        loading: "Đang tải..."
+        loading: "Đang tải...",
+
+        //typing screen
+        typingPlaceholder: "Nhập câu trả lời...",
+        check: "Kiểm tra",
+        next: "Tiếp",
+        redo: "Làm lại",
+        correct: "Đúng!",
+        wrong: "Sai!",
+
+        //LoginScreen
+        loginTitle: "Đăng nhập vào tài khoản",
+        username: "Tên đăng nhập",
+        password: "Mật khẩu",
+        login: "Đăng nhập",
+        register: "Đăng ký",
+        or: "hoặc",
+        loginSuccess: "Đăng nhập thành công!",
+        loginFailed: "Đăng nhập thất bại",
+        googleLoginSuccess: "Đăng nhập Google thành công!",
+        googleLoginFailed: "Đăng nhập Google thất bại",
+
+        //RegisterScreen
+        registerTitle: "Đăng ký tài khoản mới",
+        confirmPassword: "Xác nhận mật khẩu",
+        registerSuccess: "Đăng ký thành công!",
+        registerFailed: "Đăng ký thất bại",
+        passwordNotMatch: "Mật khẩu xác nhận không khớp",
     }
 };

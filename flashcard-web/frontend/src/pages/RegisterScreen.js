@@ -3,26 +3,31 @@ import { register } from "../api/authApi";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { translations } from "../i18n";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
+  const { lang } = useLanguage();
+  const t = translations[lang];
+
 
   const handleRegister = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      alert("Confirm password does not match!");
+      toast.error(t.passwordNotMatch);
       return;
     }
     try {
       const res = await register({ username, password });
-      toast.success("Register success!");
+      toast.success(t.registerSuccess);
 
       navigate("/login");
     } catch (err) {
-      toast.error("Register failed: " + err.message);
+      toast.error(t.registerFailed + ": " + err.message);
     }
   };
 
@@ -30,7 +35,7 @@ export default function Register() {
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 text-center text-2xl font-bold tracking-tight text-gray-800">
-          Register a new account
+          {t.registerTitle}
         </h2>
       </div>
 
@@ -41,7 +46,7 @@ export default function Register() {
             <div>
               <input
                 type="text"
-                placeholder="Username"
+                placeholder={t.username}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="block w-full rounded-md border-2 border-gray-700 px-3 py-2 text-black font-medium"
@@ -51,7 +56,7 @@ export default function Register() {
             <div>
               <input
                 type="password"
-                placeholder="Password"
+                placeholder={t.password}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="block w-full rounded-md border-2 border-gray-700 px-3 py-2 text-black font-medium"
@@ -61,7 +66,7 @@ export default function Register() {
             <div>
               <input
                 type="password"
-                placeholder="Confirm Password"
+                placeholder={t.confirmPassword}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="block w-full rounded-md border-2 border-gray-700 px-3 py-2 text-black font-medium"
@@ -73,7 +78,7 @@ export default function Register() {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-2 text-white hover:bg-indigo-400"
               >
-                Register
+                {t.register}
               </button>
             </div>
 

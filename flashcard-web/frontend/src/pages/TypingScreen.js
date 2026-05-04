@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosClient from "../api/axiosClient";
 import "../css/Typing.css";
+import { translations } from "../i18n";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function TypingScreen() {
     const { deckId } = useParams();
@@ -14,7 +16,8 @@ export default function TypingScreen() {
     const [progressCount, setProgressCount] = useState(0);
 
     const inputRef = useRef();
-
+    const { lang } = useLanguage();
+    const t = translations[lang];
     const isReverse = sessionStorage.getItem("reverse");
 
     useEffect(() => {
@@ -109,7 +112,7 @@ export default function TypingScreen() {
             <input
                 ref={inputRef}
                 type="text"
-                placeholder="Type your answer..."
+                placeholder={t.typingPlaceholder || "Type your answer..."}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -129,7 +132,7 @@ export default function TypingScreen() {
                         onClick={checkAnswer}
                         className="px-6 py-3 text-lg font-semibold bg-blue-500 text-white rounded-xl shadow hover:bg-blue-600 transition"
                     >
-                        Check
+                        {t.check || "Check"}
                     </button>
                 )}
 
@@ -138,7 +141,7 @@ export default function TypingScreen() {
                         onClick={nextCard}
                         className="px-6 py-3 text-lg font-semibold bg-green-500 text-white rounded-xl shadow hover:bg-green-600 transition"
                     >
-                        Next
+                        {t.next || "Next"}
                     </button>
                 )}
 
@@ -148,7 +151,7 @@ export default function TypingScreen() {
                             onClick={() => navigate("/")}
                             className="px-6 py-3 text-lg font-semibold bg-purple-500 text-white rounded-xl shadow hover:bg-purple-600 transition"
                         >
-                            Finish
+                            {t.finish || "Finish"}
                         </button>
 
                         <button
@@ -159,7 +162,7 @@ export default function TypingScreen() {
                             }}
                             className="px-6 py-3 text-lg font-semibold bg-gray-500 text-white rounded-xl shadow hover:bg-gray-600 transition"
                         >
-                            Redo
+                            {t.redo || "Redo"}
                         </button>
                     </>
                 )}
@@ -167,10 +170,10 @@ export default function TypingScreen() {
             </div>
 
             {result === "correct" && (
-                <p className="result-text correct">Correct!</p>
+                <p className="result-text correct">{t.correct || "Correct!"}</p>
             )}
             {result === "wrong" && (
-                <p className="result-text wrong">Wrong!</p>
+                <p className="result-text wrong">{t.wrong || "Wrong!"}</p>
             )}
         </div>
     );
