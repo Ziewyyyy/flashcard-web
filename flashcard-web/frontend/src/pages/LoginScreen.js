@@ -14,6 +14,7 @@ export default function Login() {
   const { lang } = useLanguage();
   const t = translations[lang];
 
+  const API = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
 
@@ -22,7 +23,7 @@ export default function Login() {
       if (!token) return;
 
       try {
-        const response = await fetch("http://localhost:8080/api/decks", {
+        const response = await fetch(`${API}/api/decks`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }
@@ -39,16 +40,17 @@ export default function Login() {
     };
 
     checkToken();
-  }, [navigate]);
+  }, [navigate, API]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const res = await login({ username, password });
+      console.log("LOGIN RESPONSE:", res);
       localStorage.setItem("token", res.data.token);
-      toast.success(t.loginSuccess || "Login success!");
-      setTimeout(() => navigate("/"), 1500);
-      navigate("/");
+      toast.success(t.loginSuccess || "Login success!", {
+        onClose: () => navigate("/")
+      });
     } catch (err) {
       console.error("Login failed", err);
       toast.error(t.loginFailed || "Login failed: " + (err.response?.data?.message || err.message));
@@ -72,6 +74,7 @@ export default function Login() {
 
 
   return (
+    <>
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 text-center text-2xl font-bold tracking-tight text-gray-800">
@@ -134,8 +137,9 @@ export default function Login() {
               width="300"
             />
           </div>
+            </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
