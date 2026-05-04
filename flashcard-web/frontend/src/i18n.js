@@ -56,6 +56,15 @@ export const translations = {
         confirmDelete: "Are you sure?",
         foundOne: "Found 1 card",
         foundMany: "Found {count} cards",
+
+        //StudyScreen
+        show: "Show",
+        hard: "Hard",
+        easy: "Easy",
+        finish: "Finish",
+        return: "Return",
+        studyStats: "Study Stats",
+        loading: "Loading..."
     },
     vi: {
         file: "Tệp",
@@ -114,5 +123,14 @@ export const translations = {
         confirmDelete: "Bạn chắc chưa?",
         foundOne: "Tìm thấy 1 thẻ",
         foundMany: "Tìm thấy {count} thẻ",
+
+        //study screen
+        show: "Hiện",
+        hard: "Khó",
+        easy: "Dễ",
+        finish: "Hoàn thành",
+        return: "Quay lại",
+        studyStats: "Thống kê học",
+        loading: "Đang tải..."
     }
 };

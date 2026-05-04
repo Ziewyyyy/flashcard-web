@@ -4,6 +4,8 @@ import "../css/StudyScreen.css";
 import { getStudyCards, markLearned, createCard } from "../api/cardApi";
 import { endStudy } from "../api/studyApi";
 import { useStudy } from "../context/StudyContext";
+import { translations } from "../i18n";
+import { useLanguage } from "../context/LanguageContext";
 
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
@@ -13,6 +15,8 @@ function StudyScreen() {
     const { deckId } = useParams();
     const navigate = useNavigate();
     const { updateDeckProgress } = useStudy();
+    const { lang } = useLanguage();
+    const t = translations[lang];
 
     const containerRef = useRef();
 
@@ -214,7 +218,7 @@ function StudyScreen() {
     if (isLoading) {
         return (
             <div className="study-container">
-                <h2>Loading...</h2>
+                <h2>{t.loading || "Loading..."}</h2>
             </div>
         );
     }
@@ -222,16 +226,16 @@ function StudyScreen() {
     if (isFinished) {
         return (
             <div className="study-container">
-                <h2>🎉 Finish!</h2>
+                <h2>🎉 {t.finish || "Finish!"}</h2>
                 <button className="btn1" onClick={finishStudy}>
-                    Return
+                    {t.return || "Return"}
                 </button>
             </div>
         );
     }
 
     const currentCard = cards[currentIndex];
-    if (!currentCard) return <div>Loading...</div>;
+    if (!currentCard) return <div>{t.loading || "Loading..."}</div>;
 
     return (
         <>
@@ -241,11 +245,11 @@ function StudyScreen() {
                 </button>
 
                 <div className="inline-flex mt-4 mb-6 justify-center">
-                    <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-l-full" onClick={() => navigate("/")}>Decks</button>
-                    <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" onClick={() => setShowModalCard(true)}>Add</button>
-                    <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" onClick={() => navigate(`/cards/${deckId}`)}>Browse</button>
-                    <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" onClick={() => setShowModalStats(true)}>Stats</button>
-                    <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-r-full">Sync</button>
+                    <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-l-full" onClick={() => navigate("/")}>{t.decks}</button>
+                    <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" onClick={() => setShowModalCard(true)}>{t.add}</button>
+                    <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" onClick={() => navigate(`/cards/${deckId}`)}>{t.browse}</button>
+                    <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" onClick={() => setShowModalStats(true)}>{t.stats}</button>
+                    <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-r-full">{t.sync}</button>
                 </div>
 
                 <div className="card-panel">
@@ -346,15 +350,15 @@ function StudyScreen() {
                     <div className="control-panel">
                         {!showBack ? (
                             <button className="btn" onClick={handleShow}>
-                                Show
+                                {t.show || "Show"}
                             </button>
                         ) : (
                             <div className="flex gap-4 justify-center">
                                 <button className="btn bg-red-500" onClick={handleHard}>
-                                    Hard
+                                    {t.hard || "Hard"}
                                 </button>
                                 <button className="btn bg-green-500" onClick={handleEasy}>
-                                    Easy
+                                    {t.easy || "Easy"}
                                 </button>
                             </div>
                         )}
@@ -365,16 +369,16 @@ function StudyScreen() {
                     <div className="modal-overlay">
                         <div className="modal">
                             <h3>Create Card</h3>
-                            <input type="text" placeholder="Front" value={front} onChange={(e) => setFront(e.target.value)} />
-                            <input type="text" placeholder="Back" value={back} onChange={(e) => setBack(e.target.value)} />
+                            <input type="text" placeholder={t.front} value={front} onChange={(e) => setFront(e.target.value)} />
+                            <input type="text" placeholder={t.back} value={back} onChange={(e) => setBack(e.target.value)} />
 
                             <div className="modal-actions">
                                 <button onClick={() => setShowModalCard(false)}>
-                                    Cancel
+                                    {t.cancel}
                                 </button>
 
                                 <button onClick={handleCreateCard}>
-                                    Create
+                                    {t.create}
                                 </button>
                             </div>
                         </div>
@@ -389,11 +393,11 @@ function StudyScreen() {
                     return (
                         <div className="modal-overlay">
                             <div className="modal text-center">
-                                <h2>Study Stats</h2>
-                                <p>Progress: {percent}%</p>
+                                <h2>{t.studyStats || "Study Stats"}</h2>
+                                <p>{t.progress || "Progress"}: {percent}%</p>
                                 <p>{learned} / {total}</p>
                                 <button onClick={() => setShowModalStats(false)}>
-                                    Close
+                                    {t.close || "Close"}
                                 </button>
                             </div>
                         </div>
