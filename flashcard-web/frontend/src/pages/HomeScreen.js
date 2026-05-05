@@ -452,15 +452,16 @@ function Home() {
         <div className="modal-overlay">
           <div className="modal study-modal">
             <div className="study-left">
-              <h2>{selectedDeck.name}
-                <p>{t.cards}: {selectedDeck.cardCount}</p>
-                <button className="shuffle-btn" onClick={handleShuffleDeck}>
-                  {t.shuffle}
-                </button>
-                <button className="shuffle-btn" onClick={handleReverse}>
-                  {t.reverse}
-                </button>
-              </h2>
+              <h2 className="study-title">{selectedDeck.name}</h2>
+              <p className="study-count">
+                {t.cards}: {selectedDeck.cardCount}
+              </p>
+              <button className="shuffle-btn" onClick={handleShuffleDeck}>
+                {t.shuffle}
+              </button>
+              <button className="shuffle-btn" onClick={handleReverse}>
+                {t.reverse}
+              </button>
             </div>
 
             <div className="study-right">
@@ -484,7 +485,7 @@ function Home() {
               >
                 {t.typing}
               </button>
-              <button
+              <button className="close-btn"
                 onClick={() => {
                   setShowModalStudy(false);
                   sessionStorage.removeItem("shuffle");

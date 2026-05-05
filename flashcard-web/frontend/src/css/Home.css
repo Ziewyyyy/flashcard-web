@@ -218,6 +218,18 @@
     font-weight: 600;
   }
 
+  .study-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .study-count {
+    font-size: 16px;
+    font-weight: 600;
+    color: #444;
+  }
+
   .typing-btn {
     margin-top: 10px;
     padding: 10px 20px;
@@ -324,3 +336,10 @@
   .media-remove-btn:hover {
     background: rgba(0, 0, 0, 0.8);
   }
+
+  .close-btn {
+  background: #e5e7eb;
+  color: #333;
+  padding: 6px 14px;
+  border-radius: 6px;
+}
